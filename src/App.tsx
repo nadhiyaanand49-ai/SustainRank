@@ -10,18 +10,14 @@ import {
   Filter,
   Download,
   Trash2,
-  Edit,
+  Edit3,
   Eye,
+  EyeOff,
   LogOut,
   RefreshCw,
   CheckCircle2,
   Clock,
-  AlertTriangle,
-  Code2,
-  FileText,
-  HelpCircle,
-  ExternalLink,
-  ChevronRight,
+  AlertCircle,
   TrendingUp,
   Sparkles,
   Layers,
@@ -31,13 +27,18 @@ import {
   MapPin,
   Calendar,
   X,
-  Copy,
+  ChevronRight,
+  ArrowUpRight,
+  FileSpreadsheet,
   Check,
-  User,
-  Lock
+  Compass,
+  Briefcase,
+  Zap,
+  Activity,
+  HeartHandshake
 } from 'lucide-react';
 
-// Types matching Java Domain Model
+// Domain model definitions
 export type StartupCategory = 'TechStartup' | 'GreenStartup' | 'HealthStartup' | 'SocialStartup';
 
 export interface StartupItem {
@@ -59,7 +60,7 @@ export interface StartupItem {
   isDemo: boolean;
   createdAt: string;
   rank?: number;
-  // Polymorphic Category Attributes
+  // Category-specific domain fields
   primaryTechStack?: string;
   patentCount?: number;
   estimatedCarbonOffsetTons?: number;
@@ -75,7 +76,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     id: 1,
     name: 'EcoLoop Packaging',
     category: 'GreenStartup',
-    description: 'Biodegradable mycelium packaging solutions replacing single-use styrofoam and plastic film for international e-commerce freight.',
+    description: 'Biodegradable mycelium packaging solutions replacing single-use expanded polystyrene and synthetic cushioning in cross-border e-commerce freight logistics.',
     founderName: 'Dr. Ananya Sharma',
     location: 'Bengaluru, Karnataka',
     yearEstablished: 2022,
@@ -86,7 +87,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     financialViabilityScore: 78.0,
     overallScore: 85.50,
     isAssessed: true,
-    assessmentNotes: 'Superior biological lifecycle with 92.5% renewable power in production. High customer retention across logistics hubs.',
+    assessmentNotes: 'Superior biological cradle-to-cradle lifecycle with 92.5% renewable power in production. High enterprise customer retention across major logistics hubs.',
     isDemo: true,
     createdAt: '2026-09-15T10:00:00Z',
     estimatedCarbonOffsetTons: 450.0,
@@ -96,7 +97,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     id: 2,
     name: 'NeuroGrid Systems',
     category: 'TechStartup',
-    description: 'Decentralized AI algorithms predicting municipal grid peak surges and orchestrating industrial energy storage dispatch in real-time.',
+    description: 'Decentralized artificial intelligence algorithms predicting municipal grid peak load fluctuations and orchestrating utility-scale battery energy storage dispatch.',
     founderName: 'Vikramaditya Rao',
     location: 'Hyderabad, Telangana',
     yearEstablished: 2021,
@@ -107,17 +108,17 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     financialViabilityScore: 89.0,
     overallScore: 86.00,
     isAssessed: true,
-    assessmentNotes: 'State-of-the-art grid AI with 3 granted utility patents and live pilot deployments across two state electrical boards.',
+    assessmentNotes: 'State-of-the-art grid optimization software with three granted utility patents and commercial pilot contracts across two state electrical distribution boards.',
     isDemo: true,
     createdAt: '2026-09-18T14:30:00Z',
-    primaryTechStack: 'Rust, PyTorch, Apache Kafka, Distributed K8s',
+    primaryTechStack: 'Rust, PyTorch, Apache Kafka, Distributed Kubernetes',
     patentCount: 3
   },
   {
     id: 3,
     name: 'BioPulse Diagnostic Tech',
     category: 'HealthStartup',
-    description: 'Point-of-care microfluidic biosensors enabling 15-minute diagnostic panels for underserved rural clinics without cold-chain storage.',
+    description: 'Point-of-care microfluidic biosensors enabling rapid fifteen-minute multi-pathogen screening for underserved rural clinics without requiring cold-chain refrigeration.',
     founderName: 'Dr. Preeti Deshmukh',
     location: 'Pune, Maharashtra',
     yearEstablished: 2023,
@@ -128,7 +129,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     financialViabilityScore: 70.0,
     overallScore: 82.00,
     isAssessed: true,
-    assessmentNotes: 'Profound public health contribution delivering affordable point-of-care diagnostic access across 65 rural clinics.',
+    assessmentNotes: 'Substantial public health impact delivering affordable diagnostic access to over 65 rural community healthcare centers.',
     isDemo: true,
     createdAt: '2026-09-20T09:15:00Z',
     clinicalPhase: 'Phase II Validation',
@@ -138,7 +139,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     id: 4,
     name: 'JalDharini Solutions',
     category: 'SocialStartup',
-    description: 'Community-owned solar atmospheric water generators providing clean potable drinking water to drought-prone agrarian hamlets.',
+    description: 'Community-owned solar-powered atmospheric water generators supplying certified potable drinking water to drought-vulnerable agricultural communities.',
     founderName: 'Kavita Meena',
     location: 'Jaipur, Rajasthan',
     yearEstablished: 2020,
@@ -149,7 +150,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     financialViabilityScore: 68.0,
     overallScore: 83.00,
     isAssessed: true,
-    assessmentNotes: 'Grassroots rural water security impact directly benefiting 38,000 villagers with zero fossil fuel expenditure.',
+    assessmentNotes: 'Direct grassroots impact benefiting 38,000 rural residents with zero groundwater depletion or fossil-fuel power requirements.',
     isDemo: true,
     createdAt: '2026-09-22T11:45:00Z',
     beneficiariesReached: 38000,
@@ -159,7 +160,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     id: 5,
     name: 'AgriSense Vision',
     category: 'TechStartup',
-    description: 'Precision agricultural drones and hyperspectral computer vision minimizing chemical runoff and optimizing irrigation water.',
+    description: 'Multispectral drone imaging and edge-AI soil telemetry minimizing synthetic nitrogen fertilizer leaching and optimizing precision micro-irrigation.',
     founderName: 'Rohan Joshi',
     location: 'Chennai, Tamil Nadu',
     yearEstablished: 2024,
@@ -170,7 +171,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     financialViabilityScore: 74.0,
     overallScore: 80.00,
     isAssessed: true,
-    assessmentNotes: 'Measurable 22% nitrate runoff abatement for smallholder farmer cooperatives across the Cauvery basin.',
+    assessmentNotes: 'Proven 22% nitrate runoff abatement for smallholder agricultural cooperatives across the Cauvery irrigation basin.',
     isDemo: true,
     createdAt: '2026-09-25T16:20:00Z',
     primaryTechStack: 'Python, TensorFlow Lite, ROS, Edge OpenCV',
@@ -180,7 +181,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     id: 6,
     name: 'UrbanFlora BioFuels',
     category: 'GreenStartup',
-    description: 'Biochemical fermentation transforming organic food residue from metropolitan restaurants into drop-in aviation biofuels and microbial bio-fertilizer.',
+    description: 'Enzymatic bioprocess converting post-consumer food residue from metropolitan hospitality centers into drop-in aviation biofuels and microbial organic fertilizers.',
     founderName: 'Manoj Nair',
     location: 'Kochi, Kerala',
     yearEstablished: 2025,
@@ -190,7 +191,7 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
     socialImpactScore: 0.0,
     financialViabilityScore: 0.0,
     overallScore: 0.0,
-    isAssessed: false, // Demonstrates pending unassessed state
+    isAssessed: false, // Initial unassessed state
     isDemo: true,
     createdAt: '2026-09-28T08:00:00Z',
     estimatedCarbonOffsetTons: 820.0,
@@ -199,17 +200,17 @@ const INITIAL_DEMO_STARTUPS: StartupItem[] = [
 ];
 
 export default function App() {
-  // App navigation state
-  const [activeTab, setActiveTab] = useState<'app' | 'code' | 'viva'>('app');
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'startups' | 'rankings' | 'analytics'>('dashboard');
+  // Navigation & Authentication
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [currentNav, setCurrentNav] = useState<'dashboard' | 'startups' | 'assessments' | 'rankings' | 'analytics'>('dashboard');
 
-  // Login form state (Application starts on Login screen)
-  const [loginUsername, setLoginUsername] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  // Login form state
+  const [usernameInput, setUsernameInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  // Startups database state with localStorage persistence
+  // Startups database state with persistence
   const [startups, setStartups] = useState<StartupItem[]>(() => {
     try {
       const stored = localStorage.getItem('sustainrank_startups_db');
@@ -217,22 +218,20 @@ export default function App() {
         return JSON.parse(stored);
       }
     } catch {
-      // fallback
+      // ignore
     }
     return INITIAL_DEMO_STARTUPS;
   });
 
-  // Sync to local storage
   useEffect(() => {
     localStorage.setItem('sustainrank_startups_db', JSON.stringify(startups));
   }, [startups]);
 
-  // Filters & Search
+  // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [filterCategory, setFilterCategory] = useState<string>('');
 
-  // Modals & Panels
-  const [selectedStartup, setSelectedStartup] = useState<StartupItem | null>(null);
+  // Modals & Drawers
   const [dossierStartup, setDossierStartup] = useState<StartupItem | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingStartup, setEditingStartup] = useState<StartupItem | null>(null);
@@ -241,10 +240,9 @@ export default function App() {
 
   // Notification Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 4000);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   // Assessment Form State
@@ -254,51 +252,44 @@ export default function App() {
   const [evalFin, setEvalFin] = useState<number>(50);
   const [evalNotes, setEvalNotes] = useState<string>('');
 
-  // Calculation Engine (Equal 25% weights)
+  // 25% Equal Weights Computation
   const computedOverallScore = useMemo(() => {
     const val = (evalEnv * 0.25) + (evalInnov * 0.25) + (evalSoc * 0.25) + (evalFin * 0.25);
     return Math.round(val * 100) / 100;
   }, [evalEnv, evalInnov, evalSoc, evalFin]);
 
-  // Java Deterministic Ranking Comparator
+  // Deterministic Ranking Comparator
   const rankedStartups = useMemo(() => {
-    // Filter first
     const filtered = startups.filter(s => {
-      const matchesName = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          s.founderName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          s.location.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCat = !selectedCategory || s.category === selectedCategory;
-      return matchesName && matchesCat;
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch = !q ||
+        s.name.toLowerCase().includes(q) ||
+        s.founderName.toLowerCase().includes(q) ||
+        s.location.toLowerCase().includes(q);
+      const matchesCat = !filterCategory || s.category === filterCategory;
+      return matchesSearch && matchesCat;
     });
 
     const assessed = filtered.filter(s => s.isAssessed).sort((a, b) => {
-      // 1. Overall Score DESC
       if (b.overallScore !== a.overallScore) return b.overallScore - a.overallScore;
-      // 2. Environmental Score DESC (Tie-breaker 1)
       if (b.environmentalScore !== a.environmentalScore) return b.environmentalScore - a.environmentalScore;
-      // 3. Innovation Score DESC (Tie-breaker 2)
       if (b.innovationScore !== a.innovationScore) return b.innovationScore - a.innovationScore;
-      // 4. Social Impact Score DESC (Tie-breaker 3)
       if (b.socialImpactScore !== a.socialImpactScore) return b.socialImpactScore - a.socialImpactScore;
-      // 5. Financial Viability Score DESC (Tie-breaker 4)
       if (b.financialViabilityScore !== a.financialViabilityScore) return b.financialViabilityScore - a.financialViabilityScore;
-      // 6. Name ASC
       return a.name.localeCompare(b.name);
     });
 
-    // Assign rank numbers
-    const rankedWithRank = assessed.map((s, idx) => ({ ...s, rank: idx + 1 }));
+    const rankedWithOrdinal = assessed.map((s, idx) => ({ ...s, rank: idx + 1 }));
 
-    // Unassessed appended without rank
     const unassessed = filtered
       .filter(s => !s.isAssessed)
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(s => ({ ...s, rank: undefined }));
 
-    return [...rankedWithRank, ...unassessed];
-  }, [startups, searchQuery, selectedCategory]);
+    return [...rankedWithOrdinal, ...unassessed];
+  }, [startups, searchQuery, filterCategory]);
 
-  // Dashboard Aggregates
+  // Aggregate Key Performance Metrics
   const stats = useMemo(() => {
     const total = startups.length;
     const assessed = startups.filter(s => s.isAssessed);
@@ -308,7 +299,6 @@ export default function App() {
     const avgOverall = assessedCount > 0
       ? Math.round((assessed.reduce((acc, s) => acc + s.overallScore, 0) / assessedCount) * 10) / 10
       : 0;
-
     const avgEnv = assessedCount > 0
       ? Math.round((assessed.reduce((acc, s) => acc + s.environmentalScore, 0) / assessedCount) * 10) / 10
       : 0;
@@ -345,28 +335,29 @@ export default function App() {
     };
   }, [startups, rankedStartups]);
 
-  // Actions
-  const handleLogin = (e: React.FormEvent) => {
+  // Authentication Handlers
+  const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginUsername.trim() === 'admin' && loginPassword === 'admin123') {
+    if (usernameInput.trim() === 'admin' && passwordInput === 'admin123') {
       setIsAuthenticated(true);
-      setCurrentPage('dashboard');
+      setCurrentNav('dashboard');
       setLoginError('');
-      showToast('Logged in successfully as Administrator. Navigating to Executive Dashboard.');
+      showToast('Authenticated as Administrator.');
     } else {
-      setLoginError('Invalid username or password. Please verify your credentials.');
+      setLoginError('Invalid username or password.');
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setLoginPassword('');
+    setPasswordInput('');
     setLoginError('');
-    setCurrentPage('dashboard');
-    showToast('Signed out of SustainRank dashboard.');
+    setCurrentNav('dashboard');
+    showToast('Signed out of SustainRank.');
   };
 
-  const openAssessment = (startup: StartupItem) => {
+  // Assessment Workflow Handlers
+  const openAssessmentModal = (startup: StartupItem) => {
     setAssessmentTarget(startup);
     setEvalEnv(startup.isAssessed ? startup.environmentalScore : 50);
     setEvalInnov(startup.isAssessed ? startup.innovationScore : 50);
@@ -376,7 +367,7 @@ export default function App() {
     setIsAssessmentOpen(true);
   };
 
-  const saveAssessment = () => {
+  const handleSaveAssessment = () => {
     if (!assessmentTarget) return;
 
     setStartups(prev => prev.map(s => {
@@ -396,33 +387,38 @@ export default function App() {
     }));
 
     setIsAssessmentOpen(false);
-    showToast(`Assessment recorded for "${assessmentTarget.name}". Calculated overall score: ${computedOverallScore.toFixed(2)} / 100.`);
+    showToast(`Assessment recorded for "${assessmentTarget.name}". Score: ${computedOverallScore.toFixed(2)} / 100.`);
   };
 
-  const deleteStartup = (id: number, name: string) => {
-    if (window.confirm(`Are you sure you want to delete startup "${name}"? This action permanently removes the record from the database.`)) {
+  // Startup CRUD Handlers
+  const handleDeleteStartup = (id: number, name: string) => {
+    if (window.confirm(`Permanently delete "${name}" from the database?`)) {
       setStartups(prev => prev.filter(s => s.id !== id));
-      showToast(`Startup "${name}" was successfully removed.`);
+      showToast(`Removed "${name}".`);
       if (dossierStartup?.id === id) setDossierStartup(null);
     }
   };
 
-  const resetDemoData = () => {
-    if (window.confirm('Reset all demo startups back to original state?')) {
+  const handleResetDemo = () => {
+    if (window.confirm('Reset dataset to default curated demonstration startups?')) {
       setStartups(INITIAL_DEMO_STARTUPS);
-      showToast('Demonstration dataset reset to initial 6 ventures.');
+      showToast('Demonstration dataset restored.');
     }
   };
 
-  const clearDemoData = () => {
-    if (window.confirm('Purge all sample demonstration records from database?')) {
+  const handleClearDemo = () => {
+    if (window.confirm('Purge sample demonstration records from database?')) {
       setStartups(prev => prev.filter(s => !s.isDemo));
-      showToast('Purged demonstration records.');
+      showToast('Sample records removed.');
     }
   };
 
-  const exportCSV = () => {
-    const headers = ['Rank', 'Startup Name', 'Category', 'Status', 'Overall Score (100)', 'Environmental (25%)', 'Innovation (25%)', 'Social (25%)', 'Financial (25%)', 'Founder', 'Location', 'Year', 'Email', 'Notes'];
+  const handleExportCSV = () => {
+    const headers = [
+      'Rank', 'Startup Name', 'Category', 'Assessment Status', 'Overall Score',
+      'Environmental (25%)', 'Innovation (25%)', 'Social Impact (25%)', 'Financial Viability (25%)',
+      'Founder', 'Location', 'Year Established', 'Contact Email', 'Notes'
+    ];
     const rows = rankedStartups.map(s => [
       s.rank ? s.rank.toString() : 'Pending',
       `"${s.name.replace(/"/g, '""')}"`,
@@ -441,14 +437,13 @@ export default function App() {
     ]);
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.setAttribute('href', encodeURI(csvContent));
     link.setAttribute('download', `sustainrank_report_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Exported RFC-4180 CSV file.');
+    showToast('Exported dataset to CSV.');
   };
 
   // Add/Edit Form State
@@ -466,9 +461,9 @@ export default function App() {
   const [formClinical, setFormClinical] = useState('');
   const [formBeneficiaries, setFormBeneficiaries] = useState<number>(0);
   const [formSdg, setFormSdg] = useState('');
-  const [formError, setFormError] = useState('');
+  const [formValidationError, setFormValidationError] = useState('');
 
-  const openNewForm = () => {
+  const openCreateForm = () => {
     setEditingStartup(null);
     setFormName('');
     setFormCategory('TechStartup');
@@ -484,7 +479,7 @@ export default function App() {
     setFormClinical('');
     setFormBeneficiaries(0);
     setFormSdg('');
-    setFormError('');
+    setFormValidationError('');
     setIsFormOpen(true);
   };
 
@@ -504,18 +499,18 @@ export default function App() {
     setFormClinical(startup.clinicalPhase || '');
     setFormBeneficiaries(startup.beneficiariesReached || 0);
     setFormSdg(startup.unSdgAlignment || '');
-    setFormError('');
+    setFormValidationError('');
     setIsFormOpen(true);
   };
 
-  const saveStartupForm = (e: React.FormEvent) => {
+  const handleSaveStartup = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || !formFounder.trim() || !formDesc.trim() || !formLocation.trim() || !formEmail.trim()) {
-      setFormError('Please fill in all mandatory fields.');
+      setFormValidationError('Please complete all required fields.');
       return;
     }
     if (!formEmail.includes('@') || !formEmail.includes('.')) {
-      setFormError('Please provide a valid contact email.');
+      setFormValidationError('Please enter a valid email address.');
       return;
     }
 
@@ -524,36 +519,36 @@ export default function App() {
         if (s.id === editingStartup.id) {
           return {
             ...s,
-            name: formName,
+            name: formName.trim(),
             category: formCategory,
-            description: formDesc,
-            founderName: formFounder,
-            location: formLocation,
+            description: formDesc.trim(),
+            founderName: formFounder.trim(),
+            location: formLocation.trim(),
             yearEstablished: Number(formYear),
-            contactEmail: formEmail,
-            primaryTechStack: formTechStack,
+            contactEmail: formEmail.trim(),
+            primaryTechStack: formTechStack.trim(),
             patentCount: Number(formPatents),
             estimatedCarbonOffsetTons: Number(formCarbonOffset),
             renewableEnergyPercentage: Number(formRenewable),
-            clinicalPhase: formClinical,
+            clinicalPhase: formClinical.trim(),
             beneficiariesReached: Number(formBeneficiaries),
-            unSdgAlignment: formSdg
+            unSdgAlignment: formSdg.trim()
           };
         }
         return s;
       }));
-      showToast(`Startup "${formName}" updated successfully.`);
+      showToast(`Updated "${formName.trim()}".`);
     } else {
-      const newId = startups.length > 0 ? Math.max(...startups.map(s => s.id)) + 1 : 1;
-      const newEntry: StartupItem = {
-        id: newId,
-        name: formName,
+      const nextId = startups.length > 0 ? Math.max(...startups.map(s => s.id)) + 1 : 1;
+      const createdItem: StartupItem = {
+        id: nextId,
+        name: formName.trim(),
         category: formCategory,
-        description: formDesc,
-        founderName: formFounder,
-        location: formLocation,
+        description: formDesc.trim(),
+        founderName: formFounder.trim(),
+        location: formLocation.trim(),
         yearEstablished: Number(formYear),
-        contactEmail: formEmail,
+        contactEmail: formEmail.trim(),
         environmentalScore: 0,
         innovationScore: 0,
         socialImpactScore: 0,
@@ -562,30 +557,50 @@ export default function App() {
         isAssessed: false,
         isDemo: false,
         createdAt: new Date().toISOString(),
-        primaryTechStack: formTechStack,
+        primaryTechStack: formTechStack.trim(),
         patentCount: Number(formPatents),
         estimatedCarbonOffsetTons: Number(formCarbonOffset),
         renewableEnergyPercentage: Number(formRenewable),
-        clinicalPhase: formClinical,
+        clinicalPhase: formClinical.trim(),
         beneficiariesReached: Number(formBeneficiaries),
-        unSdgAlignment: formSdg
+        unSdgAlignment: formSdg.trim()
       };
-      setStartups(prev => [newEntry, ...prev]);
-      showToast(`Startup "${formName}" registered successfully! You can now evaluate its scores.`);
+      setStartups(prev => [createdItem, ...prev]);
+      showToast(`Registered "${formName.trim()}".`);
     }
     setIsFormOpen(false);
   };
 
-  const getCategoryBadgeClass = (cat: StartupCategory) => {
+  const getCategoryBadge = (cat: StartupCategory) => {
     switch (cat) {
-      case 'TechStartup': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'GreenStartup': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'HealthStartup': return 'bg-teal-50 text-teal-700 border-teal-200';
-      case 'SocialStartup': return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'TechStartup':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+            <Zap className="w-3 h-3 text-blue-600" /> Tech Startup
+          </span>
+        );
+      case 'GreenStartup':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <Sparkles className="w-3 h-3 text-emerald-600" /> Green Startup
+          </span>
+        );
+      case 'HealthStartup':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200">
+            <Activity className="w-3 h-3 text-teal-600" /> Health Startup
+          </span>
+        );
+      case 'SocialStartup':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+            <HeartHandshake className="w-3 h-3 text-amber-600" /> Social Startup
+          </span>
+        );
     }
   };
 
-  const getCategoryName = (cat: StartupCategory) => {
+  const getCategoryLabel = (cat: StartupCategory) => {
     switch (cat) {
       case 'TechStartup': return 'Tech Startup';
       case 'GreenStartup': return 'Green Startup';
@@ -594,1001 +609,1015 @@ export default function App() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col">
-      {/* Top Academic Banner */}
-      <header className="bg-slate-900 text-white border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-40">
-        <div className="flex items-center gap-3">
-          <div className="bg-emerald-600 text-white p-2 rounded-lg flex items-center justify-center shadow-md">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-base tracking-tight text-white">Sustain<span className="text-emerald-400">Rank</span></span>
-              <span className="text-xs bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded-full font-medium">
-                Java Spring Boot PBL
-              </span>
+  // =========================================================================
+  // VIEW: AUTHENTICATION / LOGIN SCREEN
+  // =========================================================================
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-sans">
+        {/* Subtle background glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="w-full max-w-md relative z-10">
+          {/* Brand Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 mb-4">
+              <ShieldCheck className="w-6 h-6" />
             </div>
-            <p className="text-[11px] text-slate-400">
-              Team: <strong>Harshini V</strong> &amp; <strong>Nadhiya A</strong> &bull; B.Tech IT Sec C, 2nd Yr, 3rd Sem
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight text-white">Sustain<span className="text-emerald-400">Rank</span></h1>
+            <p className="text-sm text-slate-400 mt-1">Startup Sustainability Assessment Platform</p>
           </div>
-        </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center gap-1.5 bg-slate-800 p-1 rounded-lg border border-slate-700">
-          <button
-            onClick={() => setActiveTab('app')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition ${
-              activeTab === 'app' ? 'bg-emerald-600 text-white shadow' : 'text-slate-300 hover:text-white'
-            }`}
-          >
-            <Building2 className="w-3.5 h-3.5" /> Live Application
-          </button>
-          <button
-            onClick={() => setActiveTab('code')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition ${
-              activeTab === 'code' ? 'bg-emerald-600 text-white shadow' : 'text-slate-300 hover:text-white'
-            }`}
-          >
-            <Code2 className="w-3.5 h-3.5" /> Java PBL Codebase
-          </button>
-          <button
-            onClick={() => setActiveTab('viva')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition ${
-              activeTab === 'viva' ? 'bg-emerald-600 text-white shadow' : 'text-slate-300 hover:text-white'
-            }`}
-          >
-            <HelpCircle className="w-3.5 h-3.5" /> Faculty Viva Voce Guide
-          </button>
-        </div>
-      </header>
+          {/* Login Card */}
+          <div className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-7 shadow-2xl backdrop-blur-sm">
+            <h2 className="text-base font-semibold text-white mb-1">Sign in to your account</h2>
+            <p className="text-xs text-slate-400 mb-6">Enter your credentials to access the sustainability evaluation platform.</p>
 
+            {loginError && (
+              <div className="mb-5 p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs flex items-center gap-2.5">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1.5">Username</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={usernameInput}
+                    onChange={e => setUsernameInput(e.target.value)}
+                    placeholder="Enter your username"
+                    className="w-full px-3.5 py-2.5 text-sm bg-slate-900/80 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 focus:border-emerald-500 transition"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-medium text-slate-300">Password</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsernameInput('admin');
+                      setPasswordInput('admin123');
+                      setLoginError('');
+                    }}
+                    className="text-xs text-emerald-400 hover:text-emerald-300 transition"
+                  >
+                    Use demo credentials
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={passwordInput}
+                    onChange={e => setPasswordInput(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-3.5 pr-10 py-2.5 text-sm bg-slate-900/80 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 focus:border-emerald-500 transition"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-200 transition"
+                    tabIndex={-1}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full mt-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                Sign In
+              </button>
+            </form>
+
+            <div className="mt-6 pt-5 border-t border-slate-700/60 text-xs text-slate-400 flex items-center justify-between">
+              <span>Demo Login:</span>
+              <span className="font-mono text-slate-300">admin / admin123</span>
+            </div>
+          </div>
+
+          <p className="text-center text-xs text-slate-500 mt-6">
+            &copy; 2026 SustainRank. Enterprise Sustainability Assessment Platform.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // VIEW: MAIN ENTERPRISE APPLICATION LAYOUT
+  // =========================================================================
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col antialiased">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-xl border border-emerald-500/40 flex items-center gap-2 text-sm animate-fade-in">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-2.5 text-xs animate-fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Main Container */}
       <div className="flex-1 flex overflow-hidden">
-        {/* ========================================================
-            TAB 1: LIVE APPLICATION (Interactive Spring Boot & Thymeleaf Platform)
-            ======================================================== */}
-        {activeTab === 'app' && (
-          <div className="flex-1 flex w-full">
-            {/* If not authenticated, render Login Page */}
-            {!isAuthenticated ? (
-              <div className="flex-1 flex items-center justify-center p-6 bg-slate-900 overflow-y-auto">
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 border border-slate-200 animate-scale-up my-auto">
-                  {/* Academic Report Figure 5.1 Label */}
-                  <div className="text-center mb-3">
-                    <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full shadow-sm">
-                      Figure 5.1 – Login Interface
-                    </span>
+        {/* Modern Left Sidebar Navigation */}
+        <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 shrink-0 select-none">
+          {/* Brand header */}
+          <div className="h-16 px-5 flex items-center gap-3 border-b border-slate-800">
+            <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-md">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white tracking-tight">Sustain<span className="text-emerald-400">Rank</span></div>
+              <div className="text-[11px] text-slate-400">Sustainability Platform</div>
+            </div>
+          </div>
+
+          {/* Navigation Links */}
+          <nav className="p-3 space-y-1 flex-1">
+            <button
+              onClick={() => setCurrentNav('dashboard')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition cursor-pointer ${
+                currentNav === 'dashboard'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>Dashboard</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setCurrentNav('startups');
+                setSearchQuery('');
+              }}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition cursor-pointer ${
+                currentNav === 'startups'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              <Building2 className="w-4 h-4" />
+              <span>View Startups</span>
+            </button>
+
+            <button
+              onClick={openCreateForm}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-emerald-400" />
+              <span>Add Startup</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setCurrentNav('startups');
+                // Focus on search by navigating to startups view
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition cursor-pointer"
+            >
+              <Search className="w-4 h-4" />
+              <span>Search Startup</span>
+            </button>
+
+            <button
+              onClick={() => setCurrentNav('assessments')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition cursor-pointer ${
+                currentNav === 'assessments'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              <Sliders className="w-4 h-4" />
+              <span>Assessment</span>
+            </button>
+
+            <button
+              onClick={() => setCurrentNav('rankings')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition cursor-pointer ${
+                currentNav === 'rankings'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              <Trophy className="w-4 h-4" />
+              <span>Ranking</span>
+            </button>
+          </nav>
+
+          {/* Quick utility actions */}
+          <div className="px-3 py-2 border-t border-slate-800 space-y-1">
+            <button
+              onClick={handleExportCSV}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Export CSV</span>
+            </button>
+          </div>
+
+          {/* User profile & Logout */}
+          <div className="p-3 border-t border-slate-800 bg-slate-950/40 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                A
+              </div>
+              <div className="min-w-0 truncate">
+                <div className="font-medium text-white truncate leading-tight">Administrator</div>
+                <div className="text-[11px] text-slate-400 truncate">admin@sustainrank.org</div>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition cursor-pointer shrink-0"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </aside>
+
+        {/* Main Content Workspace */}
+        <main className="flex-1 flex flex-col min-w-0 bg-slate-100/60 overflow-y-auto">
+          {/* Top Header Bar */}
+          <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0 sticky top-0 z-20">
+            <div className="flex items-center gap-3">
+              <h1 className="text-base font-bold text-slate-900 capitalize">
+                {currentNav === 'dashboard' && 'Executive Dashboard'}
+                {currentNav === 'startups' && 'Startups Directory'}
+                {currentNav === 'assessments' && 'Sustainability Assessment'}
+                {currentNav === 'rankings' && 'Performance Rankings'}
+                {currentNav === 'analytics' && 'Portfolio Analytics'}
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={openCreateForm}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm transition cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Startup</span>
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-medium rounded-lg transition cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout</span>
+              </button>
+            </div>
+          </header>
+
+          {/* Page Content Body */}
+          <div className="p-6 max-w-7xl w-full mx-auto space-y-6">
+
+            {/* =============================================================
+                SECTION 1: EXECUTIVE DASHBOARD
+                ============================================================= */}
+            {currentNav === 'dashboard' && (
+              <div className="space-y-6">
+                {/* 4 Metric KPI Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Total Startups */}
+                  <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div className="flex items-center justify-between text-xs font-medium text-slate-500">
+                      <span>Total Startups</span>
+                      <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                        <Building2 className="w-4 h-4" />
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <div className="text-2xl font-bold text-slate-900 tracking-tight">{stats.total}</div>
+                      <div className="mt-1 flex items-center gap-3 text-xs text-slate-500">
+                        <span className="text-emerald-600 font-medium">{stats.assessedCount} assessed</span>
+                        <span>&bull;</span>
+                        <span>{stats.pendingCount} pending</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="text-center mb-6">
-                    <div className="inline-flex p-3 bg-emerald-600 text-white rounded-2xl shadow-lg mb-3">
-                      <ShieldCheck className="w-8 h-8" />
+                  {/* Active Domains */}
+                  <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div className="flex items-center justify-between text-xs font-medium text-slate-500">
+                      <span>Active Domains</span>
+                      <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
+                        <Layers className="w-4 h-4" />
+                      </div>
                     </div>
-                    <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Sustain<span className="text-emerald-600">Rank</span></h2>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">Startup Sustainability Assessment Platform</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">B.Tech IT PBL &bull; Team: Harshini V &amp; Nadhiya A</p>
+                    <div className="mt-3">
+                      <div className="text-2xl font-bold text-slate-900 tracking-tight">4 Sectors</div>
+                      <div className="mt-1 text-xs text-slate-500 truncate">
+                        Tech, Green, Health, Social
+                      </div>
+                    </div>
                   </div>
 
-                  {loginError && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                      <span>{loginError}</span>
+                  {/* Average Sustainability Score */}
+                  <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div className="flex items-center justify-between text-xs font-medium text-slate-500">
+                      <span>Portfolio ESG Average</span>
+                      <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                        <Award className="w-4 h-4" />
+                      </div>
                     </div>
-                  )}
+                    <div className="mt-3">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-bold text-emerald-600 tracking-tight">{stats.avgOverall.toFixed(1)}</span>
+                        <span className="text-xs text-slate-400">/ 100</span>
+                      </div>
+                      <div className="mt-1 text-xs text-slate-500">
+                        Equal 25% weights across 4 criteria
+                      </div>
+                    </div>
+                  </div>
 
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Username</label>
-                      <div className="relative">
-                        <User className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                        <input
-                          type="text"
-                          value={loginUsername}
-                          onChange={e => setLoginUsername(e.target.value)}
-                          placeholder="admin"
-                          className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-none transition"
-                          required
-                        />
+                  {/* Highest-Ranked Startup */}
+                  <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div className="flex items-center justify-between text-xs font-medium text-slate-500">
+                      <span>Top-Ranked Venture</span>
+                      <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                        <Trophy className="w-4 h-4" />
                       </div>
                     </div>
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="block text-xs font-semibold text-slate-700">Password</label>
-                        <button
-                          type="button"
-                          onClick={() => { setLoginUsername('admin'); setLoginPassword('admin123'); setLoginError(''); }}
-                          className="text-[11px] text-emerald-600 hover:text-emerald-800 font-semibold"
-                        >
-                          Auto-fill Demo Credentials
-                        </button>
-                      </div>
-                      <div className="relative">
-                        <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                        <input
-                          type="password"
-                          value={loginPassword}
-                          onChange={e => setLoginPassword(e.target.value)}
-                          placeholder="••••••••"
-                          className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-none transition"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-1.5"
-                    >
-                      Sign In to Dashboard &rarr;
-                    </button>
-                  </form>
-
-                  <div className="mt-6 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">
-                    <div className="flex items-center justify-between font-semibold text-slate-700 mb-1">
-                      <span>Default Demo Account:</span>
-                      <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-medium">Spring Security 6</span>
-                    </div>
-                    <div className="flex justify-between mt-1 text-[11px]">
-                      <span>Username: <strong className="text-emerald-700 font-mono">admin</strong></span>
-                      <span>Password: <strong className="text-emerald-700 font-mono">admin123</strong></span>
+                    <div className="mt-3">
+                      {stats.topRanked ? (
+                        <>
+                          <div className="text-base font-bold text-slate-900 truncate">{stats.topRanked.name}</div>
+                          <div className="mt-1 flex items-center gap-2">
+                            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                              {stats.topRanked.overallScore.toFixed(2)} pts
+                            </span>
+                            <span className="text-xs text-slate-500 truncate">{getCategoryLabel(stats.topRanked.category)}</span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-xs text-slate-400">No assessed startups recorded</div>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              // Authenticated Dashboard Layout with Dark Navy Sidebar
-              <div className="flex-1 flex overflow-hidden">
-                {/* Dark Navy Sidebar */}
-                <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 shrink-0">
-                  <div className="p-4 border-b border-slate-800">
-                    <div className="flex items-center gap-2 text-white font-bold text-base">
-                      <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                      <span>Sustain<span className="text-emerald-400">Rank</span></span>
-                    </div>
-                    <span className="text-[11px] text-slate-400">Academic Decision Support</span>
-                  </div>
 
-                  <nav className="p-3 space-y-1 flex-1">
-                    <button
-                      onClick={() => setCurrentPage('dashboard')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                        currentPage === 'dashboard' ? 'bg-emerald-600 text-white font-semibold shadow' : 'hover:bg-slate-800 text-slate-300'
-                      }`}
-                    >
-                      <BarChart3 className="w-4 h-4" /> Executive Dashboard
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage('startups')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                        currentPage === 'startups' ? 'bg-emerald-600 text-white font-semibold shadow' : 'hover:bg-slate-800 text-slate-300'
-                      }`}
-                    >
-                      <Building2 className="w-4 h-4" /> Startups Registry
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage('rankings')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                        currentPage === 'rankings' ? 'bg-emerald-600 text-white font-semibold shadow' : 'hover:bg-slate-800 text-slate-300'
-                      }`}
-                    >
-                      <Trophy className="w-4 h-4" /> Rankings &amp; ESG Scores
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage('analytics')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                        currentPage === 'analytics' ? 'bg-emerald-600 text-white font-semibold shadow' : 'hover:bg-slate-800 text-slate-300'
-                      }`}
-                    >
-                      <TrendingUp className="w-4 h-4" /> Portfolio Analytics
-                    </button>
-
-                    <div className="pt-4 border-t border-slate-800 my-2">
-                      <button
-                        onClick={openNewForm}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-emerald-400 bg-emerald-950/60 hover:bg-emerald-950 border border-emerald-800 transition"
-                      >
-                        <Plus className="w-4 h-4" /> Register New Startup
-                      </button>
-                    </div>
-                  </nav>
-
-                  {/* Sidebar User & Logout */}
-                  <div className="p-3 border-t border-slate-800 bg-slate-950/40 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
-                        A
-                      </div>
+                {/* Criteria Benchmarks & Category Breakdown */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* 4 Pillars Benchmark */}
+                  <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
                       <div>
-                        <div className="font-semibold text-white leading-tight">Admin User</div>
-                        <div className="text-[10px] text-slate-400">admin@sustainrank</div>
+                        <h2 className="text-sm font-semibold text-slate-900">ESG Criteria Portfolio Averages</h2>
+                        <p className="text-xs text-slate-500">Benchmark across {stats.assessedCount} assessed ventures</p>
                       </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="font-medium text-slate-700">Environmental Sustainability (25%)</span>
+                          <span className="font-semibold text-emerald-600">{stats.avgEnv} / 100</span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                          <div className="bg-emerald-500 h-full rounded-full transition-all" style={{ width: `${stats.avgEnv}%` }} />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="font-medium text-slate-700">Innovation &amp; Technology (25%)</span>
+                          <span className="font-semibold text-blue-600">{stats.avgInnov} / 100</span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                          <div className="bg-blue-600 h-full rounded-full transition-all" style={{ width: `${stats.avgInnov}%` }} />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="font-medium text-slate-700">Social Impact &amp; Inclusion (25%)</span>
+                          <span className="font-semibold text-amber-600">{stats.avgSoc} / 100</span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                          <div className="bg-amber-500 h-full rounded-full transition-all" style={{ width: `${stats.avgSoc}%` }} />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="font-medium text-slate-700">Financial Viability (25%)</span>
+                          <span className="font-semibold text-teal-600">{stats.avgFin} / 100</span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                          <div className="bg-teal-500 h-full rounded-full transition-all" style={{ width: `${stats.avgFin}%` }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Domain Category Distribution */}
+                  <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <h2 className="text-sm font-semibold text-slate-900 mb-1">Portfolio Domain Representation</h2>
+                      <p className="text-xs text-slate-500 mb-4">Distribution of early-stage ventures across recognized sectors</p>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3.5 rounded-lg bg-blue-50/60 border border-blue-100">
+                          <div className="text-xs font-medium text-blue-700">Tech Startups</div>
+                          <div className="text-xl font-bold text-blue-900 mt-1">{stats.categoryCounts.TechStartup}</div>
+                          <div className="text-[11px] text-blue-600/80 mt-0.5">Software &amp; Hardware</div>
+                        </div>
+
+                        <div className="p-3.5 rounded-lg bg-emerald-50/60 border border-emerald-100">
+                          <div className="text-xs font-medium text-emerald-700">Green Startups</div>
+                          <div className="text-xl font-bold text-emerald-900 mt-1">{stats.categoryCounts.GreenStartup}</div>
+                          <div className="text-[11px] text-emerald-600/80 mt-0.5">CleanTech &amp; Circular</div>
+                        </div>
+
+                        <div className="p-3.5 rounded-lg bg-teal-50/60 border border-teal-100">
+                          <div className="text-xs font-medium text-teal-700">Health Startups</div>
+                          <div className="text-xl font-bold text-teal-900 mt-1">{stats.categoryCounts.HealthStartup}</div>
+                          <div className="text-[11px] text-teal-600/80 mt-0.5">MedTech &amp; Biotech</div>
+                        </div>
+
+                        <div className="p-3.5 rounded-lg bg-amber-50/60 border border-amber-100">
+                          <div className="text-xs font-medium text-amber-700">Social Startups</div>
+                          <div className="text-xl font-bold text-amber-900 mt-1">{stats.categoryCounts.SocialStartup}</div>
+                          <div className="text-[11px] text-amber-600/80 mt-0.5">Community &amp; SDGs</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                      <span>Database maintenance:</span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleResetDemo}
+                          className="text-slate-600 hover:text-slate-900 transition underline cursor-pointer"
+                        >
+                          Reset demo data
+                        </button>
+                        <span>&bull;</span>
+                        <button
+                          onClick={handleClearDemo}
+                          className="text-rose-600 hover:text-rose-700 transition underline cursor-pointer"
+                        >
+                          Clear sample records
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Additions Table */}
+                <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+                  <div className="p-5 border-b border-slate-200/80 flex items-center justify-between">
+                    <div>
+                      <h2 className="text-sm font-semibold text-slate-900">Recently Registered Startups</h2>
+                      <p className="text-xs text-slate-500">Latest additions to the registry</p>
                     </div>
                     <button
-                      onClick={handleLogout}
-                      className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded transition"
-                      title="Sign Out"
+                      onClick={() => setCurrentNav('startups')}
+                      className="text-xs font-medium text-emerald-600 hover:text-emerald-700 transition flex items-center gap-1 cursor-pointer"
                     >
-                      <LogOut className="w-4 h-4" />
+                      <span>View All ({startups.length})</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                </aside>
 
-                {/* Main Content Area */}
-                <main className="flex-1 overflow-y-auto bg-slate-100 p-6">
-                  {/* Top Bar with Quick Controls */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="font-bold text-slate-800 text-sm">
-                        {currentPage === 'dashboard' && 'Executive Sustainability Dashboard (Figure 5.2 – Main Dashboard)'}
-                        {currentPage === 'startups' && 'Startups Management & Registry'}
-                        {currentPage === 'rankings' && 'Leaderboard & Multi-Criteria Rankings (Figure 5.5 – Startup Ranking Output)'}
-                        {currentPage === 'analytics' && 'Portfolio Analytics & Benchmarks'}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-xs">
-                      <button
-                        onClick={exportCSV}
-                        className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg border border-slate-300 flex items-center gap-1.5 transition"
-                      >
-                        <Download className="w-3.5 h-3.5" /> Export CSV
-                      </button>
-                      <button
-                        onClick={resetDemoData}
-                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-300 flex items-center gap-1 transition"
-                        title="Restore 6 demo records"
-                      >
-                        <RefreshCw className="w-3.5 h-3.5" /> Reset Demo
-                      </button>
-                      <button
-                        onClick={clearDemoData}
-                        className="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 flex items-center gap-1 transition"
-                        title="Purge sample data"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" /> Clear Demo
-                      </button>
-                      <button
-                        onClick={openNewForm}
-                        className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-sm flex items-center gap-1.5 transition"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Add Startup
-                      </button>
-                      <button
-                        onClick={handleLogout}
-                        className="px-3 py-1.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 font-medium rounded-lg border border-slate-300 flex items-center gap-1.5 transition"
-                        title="Sign Out to Login Screen"
-                      >
-                        <LogOut className="w-3.5 h-3.5" /> Logout
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* ========================================================
-                      PAGE 1: DASHBOARD
-                      ======================================================== */}
-                  {currentPage === 'dashboard' && (
-                    <div className="space-y-6">
-                      {/* 4 Metric Cards */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-                            <span>TOTAL REGISTERED</span>
-                            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                              <Building2 className="w-4 h-4" />
-                            </div>
-                          </div>
-                          <div className="mt-2">
-                            <span className="text-3xl font-extrabold text-slate-900">{stats.total}</span>
-                            <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
-                              <span><strong>{stats.assessedCount}</strong> Assessed</span>
-                              <span><strong>{stats.pendingCount}</strong> Pending</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-                            <span>DOMAINS / CATEGORIES</span>
-                            <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
-                              <Layers className="w-4 h-4" />
-                            </div>
-                          </div>
-                          <div className="mt-2">
-                            <span className="text-3xl font-extrabold text-slate-900">4 of 4</span>
-                            <div className="mt-1 text-xs text-slate-500">
-                              Tech, Green, Health, Social
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-                            <span>AVERAGE ESG SCORE</span>
-                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                              <Award className="w-4 h-4" />
-                            </div>
-                          </div>
-                          <div className="mt-2">
-                            <span className="text-3xl font-extrabold text-emerald-600">{stats.avgOverall.toFixed(1)}</span>
-                            <span className="text-xs text-slate-500 ml-1">/ 100</span>
-                            <div className="mt-1 text-xs text-slate-500">
-                              Equal 25% weights across 4 pillars
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-                            <span>HIGHEST-RANKED VENTURE</span>
-                            <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
-                              <Trophy className="w-4 h-4" />
-                            </div>
-                          </div>
-                          <div className="mt-2">
-                            {stats.topRanked ? (
-                              <>
-                                <div className="text-base font-bold text-slate-900 truncate">{stats.topRanked.name}</div>
-                                <div className="mt-1 flex items-center gap-1.5">
-                                  <span className="text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
-                                    {stats.topRanked.overallScore.toFixed(2)} pts
-                                  </span>
-                                  <span className="text-[11px] text-slate-500 truncate">{getCategoryName(stats.topRanked.category)}</span>
-                                </div>
-                              </>
-                            ) : (
-                              <span className="text-xs text-slate-400">No assessed startups yet</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Criteria Benchmark Grid */}
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* 4 Pillars Macro Averages */}
-                        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                          <h3 className="font-bold text-slate-900 text-sm mb-1">Pillar Benchmarks (Portfolio Averages)</h3>
-                          <p className="text-xs text-slate-500 mb-4">Calculated dynamically across all {stats.assessedCount} assessed ventures</p>
-
-                          <div className="space-y-4">
-                            <div>
-                              <div className="flex justify-between text-xs font-semibold mb-1">
-                                <span className="text-emerald-700 flex items-center gap-1">
-                                  <Sparkles className="w-3.5 h-3.5" /> Environmental Sustainability (25%)
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200/80 font-medium">
+                        <tr>
+                          <th className="py-3 px-4">Startup</th>
+                          <th className="py-3 px-3">Category</th>
+                          <th className="py-3 px-3">Founder</th>
+                          <th className="py-3 px-3">Location</th>
+                          <th className="py-3 px-3">Overall Score</th>
+                          <th className="py-3 px-3">Status</th>
+                          <th className="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {startups.slice(0, 5).map(s => (
+                          <tr key={s.id} className="hover:bg-slate-50/70 transition">
+                            <td className="py-3.5 px-4">
+                              <button
+                                onClick={() => setDossierStartup(s)}
+                                className="font-semibold text-slate-900 hover:text-emerald-600 transition text-left cursor-pointer"
+                              >
+                                {s.name}
+                              </button>
+                              <div className="text-[11px] text-slate-400">Founded {s.yearEstablished}</div>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {getCategoryBadge(s.category)}
+                            </td>
+                            <td className="py-3.5 px-3 text-slate-700 font-medium">{s.founderName}</td>
+                            <td className="py-3.5 px-3 text-slate-500">{s.location}</td>
+                            <td className="py-3.5 px-3">
+                              {s.isAssessed ? (
+                                <span className="font-bold text-slate-900 text-sm">
+                                  {s.overallScore.toFixed(2)}
                                 </span>
-                                <span className="text-slate-900 font-bold">{stats.avgEnv} / 100</span>
-                              </div>
-                              <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${stats.avgEnv}%` }}></div>
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className="flex justify-between text-xs font-semibold mb-1">
-                                <span className="text-blue-700 flex items-center gap-1">
-                                  <Code2 className="w-3.5 h-3.5" /> Innovation &amp; Tech Moat (25%)
-                                </span>
-                                <span className="text-slate-900 font-bold">{stats.avgInnov} / 100</span>
-                              </div>
-                              <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-blue-600 h-full rounded-full transition-all duration-500" style={{ width: `${stats.avgInnov}%` }}></div>
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className="flex justify-between text-xs font-semibold mb-1">
-                                <span className="text-amber-700 flex items-center gap-1">
-                                  <Globe className="w-3.5 h-3.5" /> Social Impact &amp; Inclusion (25%)
-                                </span>
-                                <span className="text-slate-900 font-bold">{stats.avgSoc} / 100</span>
-                              </div>
-                              <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-amber-500 h-full rounded-full transition-all duration-500" style={{ width: `${stats.avgSoc}%` }}></div>
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className="flex justify-between text-xs font-semibold mb-1">
-                                <span className="text-teal-700 flex items-center gap-1">
-                                  <TrendingUp className="w-3.5 h-3.5" /> Financial Viability (25%)
-                                </span>
-                                <span className="text-slate-900 font-bold">{stats.avgFin} / 100</span>
-                              </div>
-                              <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-teal-500 h-full rounded-full transition-all duration-500" style={{ width: `${stats.avgFin}%` }}></div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Category Distribution Breakdown */}
-                        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-sm mb-1">Venture Distribution by Domain</h3>
-                            <p className="text-xs text-slate-500 mb-4">Total portfolio representation across the 4 specialized sectors</p>
-
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="p-3 rounded-lg bg-blue-50/70 border border-blue-100">
-                                <span className="text-xs font-semibold text-blue-800">Tech Startups</span>
-                                <div className="text-2xl font-extrabold text-blue-900 mt-1">{stats.categoryCounts.TechStartup}</div>
-                                <span className="text-[11px] text-blue-600">Enterprise AI &amp; Cloud</span>
-                              </div>
-                              <div className="p-3 rounded-lg bg-emerald-50/70 border border-emerald-100">
-                                <span className="text-xs font-semibold text-emerald-800">Green Startups</span>
-                                <div className="text-2xl font-extrabold text-emerald-900 mt-1">{stats.categoryCounts.GreenStartup}</div>
-                                <span className="text-[11px] text-emerald-600">Circular &amp; CleanTech</span>
-                              </div>
-                              <div className="p-3 rounded-lg bg-teal-50/70 border border-teal-100">
-                                <span className="text-xs font-semibold text-teal-800">Health Startups</span>
-                                <div className="text-2xl font-extrabold text-teal-900 mt-1">{stats.categoryCounts.HealthStartup}</div>
-                                <span className="text-[11px] text-teal-600">Diagnostics &amp; MedTech</span>
-                              </div>
-                              <div className="p-3 rounded-lg bg-amber-50/70 border border-amber-100">
-                                <span className="text-xs font-semibold text-amber-800">Social Startups</span>
-                                <div className="text-2xl font-extrabold text-amber-900 mt-1">{stats.categoryCounts.SocialStartup}</div>
-                                <span className="text-[11px] text-amber-600">Agritech &amp; Rural Access</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 flex justify-between items-center">
-                            <span>Need to assess unassessed ventures?</span>
-                            <button
-                              onClick={() => setCurrentPage('startups')}
-                              className="text-emerald-600 font-semibold hover:underline flex items-center gap-1"
-                            >
-                              Go to Startups <ChevronRight className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Recent Additions Table */}
-                      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <div className="flex items-center justify-between mb-4">
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-sm">Recently Registered Ventures</h3>
-                            <p className="text-xs text-slate-500">Quick view of latest startup additions</p>
-                          </div>
-                          <button
-                            onClick={() => setCurrentPage('startups')}
-                            className="text-xs text-emerald-600 font-semibold hover:underline"
-                          >
-                            View All ({startups.length}) &rarr;
-                          </button>
-                        </div>
-
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-left text-xs">
-                            <thead className="bg-slate-50 text-slate-500 uppercase border-y border-slate-200">
-                              <tr>
-                                <th className="py-2.5 px-3">Startup Name</th>
-                                <th className="py-2.5 px-3">Category</th>
-                                <th className="py-2.5 px-3">Founder</th>
-                                <th className="py-2.5 px-3">Status</th>
-                                <th className="py-2.5 px-3">Overall Score</th>
-                                <th className="py-2.5 px-3 text-right">Actions</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                              {startups.slice(0, 5).map(s => (
-                                <tr key={s.id} className="hover:bg-slate-50/70 transition">
-                                  <td className="py-3 px-3">
-                                    <div className="font-bold text-slate-900">{s.name}</div>
-                                    <span className="text-[11px] text-slate-500">Founded {s.yearEstablished} &bull; {s.location}</span>
-                                  </td>
-                                  <td className="py-3 px-3">
-                                    <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold border ${getCategoryBadgeClass(s.category)}`}>
-                                      {getCategoryName(s.category)}
-                                    </span>
-                                  </td>
-                                  <td className="py-3 px-3 text-slate-700">{s.founderName}</td>
-                                  <td className="py-3 px-3">
-                                    {s.isAssessed ? (
-                                      <span className="inline-flex items-center gap-1 text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-medium">
-                                        <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Assessed
-                                      </span>
-                                    ) : (
-                                      <span className="inline-flex items-center gap-1 text-[11px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded font-medium">
-                                        <Clock className="w-3 h-3 text-amber-600" /> Pending
-                                      </span>
-                                    )}
-                                  </td>
-                                  <td className="py-3 px-3">
-                                    {s.isAssessed ? (
-                                      <span className="font-extrabold text-emerald-700 text-sm">
-                                        {s.overallScore.toFixed(2)} / 100
-                                      </span>
-                                    ) : (
-                                      <span className="text-slate-400 italic text-[11px]">Unassessed</span>
-                                    )}
-                                  </td>
-                                  <td className="py-3 px-3 text-right">
-                                    <div className="inline-flex items-center gap-1">
-                                      <button
-                                        onClick={() => setDossierStartup(s)}
-                                        className="p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded"
-                                        title="View Dossier"
-                                      >
-                                        <Eye className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={() => openAssessment(s)}
-                                        className="p-1 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded"
-                                        title="Evaluate Scores"
-                                      >
-                                        <Sliders className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* ========================================================
-                      PAGE 2: STARTUPS DIRECTORY (Full CRUD & Search)
-                      ======================================================== */}
-                  {currentPage === 'startups' && (
-                    <div className="space-y-4">
-                      {/* Search & Filter Toolbar */}
-                      <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex flex-wrap items-center gap-2 flex-1">
-                          <div className="relative min-w-[240px]">
-                            <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
-                            <input
-                              type="text"
-                              placeholder="Search by name, founder, or city..."
-                              value={searchQuery}
-                              onChange={e => setSearchQuery(e.target.value)}
-                              className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                            />
-                          </div>
-
-                          <select
-                            value={selectedCategory}
-                            onChange={e => setSelectedCategory(e.target.value)}
-                            className="text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none"
-                          >
-                            <option value="">All Categories</option>
-                            <option value="TechStartup">Tech Startups</option>
-                            <option value="GreenStartup">Green Startups</option>
-                            <option value="HealthStartup">Health Startups</option>
-                            <option value="SocialStartup">Social Startups</option>
-                          </select>
-
-                          {(searchQuery || selectedCategory) && (
-                            <button
-                              onClick={() => { setSearchQuery(''); setSelectedCategory(''); }}
-                              className="text-xs text-slate-500 hover:text-slate-800 underline"
-                            >
-                              Reset Filters
-                            </button>
-                          )}
-                        </div>
-
-                        <div className="text-xs text-slate-500">
-                          Showing <strong>{rankedStartups.length}</strong> of {startups.length} ventures
-                        </div>
-                      </div>
-
-                      {/* Startups Table */}
-                      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-left text-xs">
-                            <thead className="bg-slate-50 text-slate-600 uppercase border-b border-slate-200 font-semibold">
-                              <tr>
-                                <th className="py-3 px-4">Startup</th>
-                                <th className="py-3 px-3">Category</th>
-                                <th className="py-3 px-3">Founder &amp; Location</th>
-                                <th className="py-3 px-3">Criteria (E | I | S | F)</th>
-                                <th className="py-3 px-3">Overall Score</th>
-                                <th className="py-3 px-3">Status</th>
-                                <th className="py-3 px-4 text-right">Actions</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                              {rankedStartups.map(s => (
-                                <tr key={s.id} className="hover:bg-slate-50/80 transition">
-                                  <td className="py-3.5 px-4">
-                                    <div
-                                      onClick={() => setDossierStartup(s)}
-                                      className="font-bold text-slate-900 cursor-pointer hover:text-emerald-600 transition"
-                                    >
-                                      {s.name}
-                                    </div>
-                                    <div className="text-[11px] text-slate-400 mt-0.5 truncate max-w-xs">{s.description}</div>
-                                  </td>
-                                  <td className="py-3.5 px-3">
-                                    <span className={`inline-block px-2.5 py-0.5 rounded text-[11px] font-semibold border ${getCategoryBadgeClass(s.category)}`}>
-                                      {getCategoryName(s.category)}
-                                    </span>
-                                  </td>
-                                  <td className="py-3.5 px-3">
-                                    <div className="font-medium text-slate-800">{s.founderName}</div>
-                                    <div className="text-[11px] text-slate-500">{s.location}</div>
-                                  </td>
-                                  <td className="py-3.5 px-3">
-                                    {s.isAssessed ? (
-                                      <div className="flex items-center gap-1 text-[11px]">
-                                        <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-mono" title="Environmental">
-                                          E:{s.environmentalScore.toFixed(0)}
-                                        </span>
-                                        <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-mono" title="Innovation">
-                                          I:{s.innovationScore.toFixed(0)}
-                                        </span>
-                                        <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded font-mono" title="Social">
-                                          S:{s.socialImpactScore.toFixed(0)}
-                                        </span>
-                                        <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded font-mono" title="Financial">
-                                          F:{s.financialViabilityScore.toFixed(0)}
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <span className="text-[11px] text-slate-400 italic">Scores Pending</span>
-                                    )}
-                                  </td>
-                                  <td className="py-3.5 px-3">
-                                    {s.isAssessed ? (
-                                      <span className="font-extrabold text-emerald-700 text-sm">
-                                        {s.overallScore.toFixed(2)}
-                                      </span>
-                                    ) : (
-                                      <span className="text-slate-400">&ndash;</span>
-                                    )}
-                                  </td>
-                                  <td className="py-3.5 px-3">
-                                    {s.isAssessed ? (
-                                      <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-semibold uppercase">
-                                        Assessed
-                                      </span>
-                                    ) : (
-                                      <span className="inline-flex items-center gap-1 text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded font-semibold uppercase">
-                                        Pending
-                                      </span>
-                                    )}
-                                  </td>
-                                  <td className="py-3.5 px-4 text-right">
-                                    <div className="inline-flex items-center gap-1.5">
-                                      <button
-                                        onClick={() => setDossierStartup(s)}
-                                        className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded"
-                                        title="View Profile Dossier"
-                                      >
-                                        <Eye className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={() => openAssessment(s)}
-                                        className="p-1.5 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded"
-                                        title="Sustainability Assessment"
-                                      >
-                                        <Sliders className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={() => openEditForm(s)}
-                                        className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
-                                        title="Edit Details"
-                                      >
-                                        <Edit className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={() => deleteStartup(s.id, s.name)}
-                                        className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
-                                        title="Delete Startup"
-                                      >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-
-                              {rankedStartups.length === 0 && (
-                                <tr>
-                                  <td colSpan={7} className="py-8 text-center text-slate-400">
-                                    No startups matched the search query. Try resetting filters.
-                                  </td>
-                                </tr>
+                              ) : (
+                                <span className="text-slate-400 italic">Unassessed</span>
                               )}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* ========================================================
-                      PAGE 3: RANKINGS & LEADERBOARD
-                      ======================================================== */}
-                  {currentPage === 'rankings' && (
-                    <div className="space-y-6">
-                      {/* Tie-breaking logic callout */}
-                      <div className="bg-slate-900 text-white p-4 rounded-xl border border-slate-800 shadow-md">
-                        <div className="flex items-start gap-3">
-                          <Trophy className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-                          <div className="text-xs">
-                            <h4 className="font-bold text-white text-sm mb-1">
-                              Deterministic Multi-Criteria Ranking Algorithm (Java Comparator)
-                            </h4>
-                            <p className="text-slate-300 leading-relaxed">
-                              Ventures are sorted primarily by <strong>Overall Score (Descending)</strong>. Ties are deterministically broken in sequence:
-                              <span className="text-emerald-400 font-semibold"> 1. Environmental Score</span> &rarr;
-                              <span className="text-blue-400 font-semibold"> 2. Innovation Score</span> &rarr;
-                              <span className="text-amber-400 font-semibold"> 3. Social Impact Score</span> &rarr;
-                              <span className="text-teal-400 font-semibold"> 4. Financial Viability</span> &rarr;
-                              <span className="text-white font-semibold"> 5. Alphabetical Name</span>.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Top 3 Podium Highlights */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {rankedStartups.filter(s => s.isAssessed).slice(0, 3).map((podium, index) => {
-                          const medalStyles = [
-                            { border: 'border-amber-400 bg-amber-50/50', badge: 'bg-amber-400 text-slate-950', title: '1st Place Leader' },
-                            { border: 'border-slate-300 bg-slate-50', badge: 'bg-slate-400 text-white', title: '2nd Place' },
-                            { border: 'border-amber-600/40 bg-amber-50/20', badge: 'bg-amber-600 text-white', title: '3rd Place' }
-                          ][index];
-
-                          return (
-                            <div key={podium.id} className={`p-4 rounded-xl border-2 ${medalStyles.border} shadow-sm relative flex flex-col justify-between`}>
-                              <div>
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className={`w-7 h-7 rounded-full ${medalStyles.badge} flex items-center justify-center font-bold text-xs`}>
-                                    #{index + 1}
-                                  </span>
-                                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${getCategoryBadgeClass(podium.category)}`}>
-                                    {getCategoryName(podium.category)}
-                                  </span>
-                                </div>
-                                <h4 className="font-bold text-slate-900 text-base">{podium.name}</h4>
-                                <p className="text-xs text-slate-500 mt-0.5">{podium.founderName} &bull; {podium.location}</p>
-                              </div>
-
-                              <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-baseline justify-between">
-                                <span className="text-xs text-slate-500 font-medium">Composite Score:</span>
-                                <span className="text-xl font-extrabold text-emerald-700">
-                                  {podium.overallScore.toFixed(2)} <span className="text-xs font-normal text-slate-500">/ 100</span>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {s.isAssessed ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Assessed
                                 </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                  Pending
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="inline-flex items-center gap-1">
+                                <button
+                                  onClick={() => setDossierStartup(s)}
+                                  className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Details"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => openAssessmentModal(s)}
+                                  className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition cursor-pointer"
+                                  title="Evaluate"
+                                >
+                                  <Sliders className="w-3.5 h-3.5" />
+                                </button>
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Full Rankings Table */}
-                      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-left text-xs">
-                            <thead className="bg-slate-50 text-slate-600 uppercase border-b border-slate-200 font-semibold">
-                              <tr>
-                                <th className="py-3 px-3 text-center w-14">Rank</th>
-                                <th className="py-3 px-3">Startup Name</th>
-                                <th className="py-3 px-3">Domain</th>
-                                <th className="py-3 px-3 text-center">Environmental (25%)</th>
-                                <th className="py-3 px-3 text-center">Innovation (25%)</th>
-                                <th className="py-3 px-3 text-center">Social Impact (25%)</th>
-                                <th className="py-3 px-3 text-center">Financial (25%)</th>
-                                <th className="py-3 px-3 text-center font-bold text-slate-800">Overall Score</th>
-                                <th className="py-3 px-3 text-right">Actions</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                              {rankedStartups.map(s => (
-                                <tr key={s.id} className={`hover:bg-slate-50/80 transition ${s.rank === 1 ? 'bg-amber-50/20' : ''}`}>
-                                  <td className="py-3 px-3 text-center">
-                                    {s.rank ? (
-                                      <span className={`inline-flex items-center justify-center font-bold rounded-full w-6 h-6 text-xs ${
-                                        s.rank === 1 ? 'bg-amber-400 text-slate-900' :
-                                        s.rank === 2 ? 'bg-slate-300 text-slate-900' :
-                                        s.rank === 3 ? 'bg-amber-700 text-white' :
-                                        'text-slate-600'
-                                      }`}>
-                                        {s.rank}
-                                      </span>
-                                    ) : (
-                                      <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200">
-                                        Pending
-                                      </span>
-                                    )}
-                                  </td>
-                                  <td className="py-3 px-3 font-semibold text-slate-900">
-                                    <span
-                                      onClick={() => setDossierStartup(s)}
-                                      className="cursor-pointer hover:text-emerald-600 transition"
-                                    >
-                                      {s.name}
-                                    </span>
-                                  </td>
-                                  <td className="py-3 px-3">
-                                    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${getCategoryBadgeClass(s.category)}`}>
-                                      {getCategoryName(s.category)}
-                                    </span>
-                                  </td>
-                                  <td className="py-3 px-3 text-center font-mono">
-                                    {s.isAssessed ? s.environmentalScore.toFixed(1) : '&ndash;'}
-                                  </td>
-                                  <td className="py-3 px-3 text-center font-mono">
-                                    {s.isAssessed ? s.innovationScore.toFixed(1) : '&ndash;'}
-                                  </td>
-                                  <td className="py-3 px-3 text-center font-mono">
-                                    {s.isAssessed ? s.socialImpactScore.toFixed(1) : '&ndash;'}
-                                  </td>
-                                  <td className="py-3 px-3 text-center font-mono">
-                                    {s.isAssessed ? s.financialViabilityScore.toFixed(1) : '&ndash;'}
-                                  </td>
-                                  <td className="py-3 px-3 text-center">
-                                    {s.isAssessed ? (
-                                      <span className={`inline-block px-2.5 py-1 rounded-full font-bold text-xs ${
-                                        s.overallScore >= 85 ? 'bg-emerald-100 text-emerald-800' :
-                                        s.overallScore >= 70 ? 'bg-blue-100 text-blue-800' :
-                                        s.overallScore >= 50 ? 'bg-amber-100 text-amber-800' :
-                                        'bg-red-100 text-red-800'
-                                      }`}>
-                                        {s.overallScore.toFixed(2)}
-                                      </span>
-                                    ) : (
-                                      <span className="text-slate-400 italic text-[11px]">Unassessed</span>
-                                    )}
-                                  </td>
-                                  <td className="py-3 px-3 text-right">
-                                    <div className="inline-flex items-center gap-1">
-                                      <button
-                                        onClick={() => setDossierStartup(s)}
-                                        className="p-1 text-slate-500 hover:text-slate-900 rounded"
-                                        title="View Dossier"
-                                      >
-                                        <Eye className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={() => openAssessment(s)}
-                                        className="p-1 text-emerald-600 hover:text-emerald-800 rounded"
-                                        title="Evaluate"
-                                      >
-                                        <Sliders className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* ========================================================
-                      PAGE 4: ANALYTICS & REPORTS
-                      ======================================================== */}
-                  {currentPage === 'analytics' && (
-                    <div className="space-y-6">
-                      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 className="font-bold text-slate-900 text-base mb-1">Portfolio ESG Performance Benchmarks</h3>
-                        <p className="text-xs text-slate-500 mb-6">Cross-criteria comparative analysis across all four sustainability evaluation dimensions.</p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                          <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100">
-                            <span className="text-xs text-emerald-800 font-semibold">Average Environmental</span>
-                            <div className="text-2xl font-black text-emerald-900 mt-1">{stats.avgEnv} / 100</div>
-                            <span className="text-[11px] text-emerald-700">Carbon &amp; Renewable Energy</span>
-                          </div>
-                          <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-100">
-                            <span className="text-xs text-blue-800 font-semibold">Average Innovation</span>
-                            <div className="text-2xl font-black text-blue-900 mt-1">{stats.avgInnov} / 100</div>
-                            <span className="text-[11px] text-blue-700">Patents &amp; Technical Moat</span>
-                          </div>
-                          <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-100">
-                            <span className="text-xs text-amber-800 font-semibold">Average Social Impact</span>
-                            <div className="text-2xl font-black text-amber-900 mt-1">{stats.avgSoc} / 100</div>
-                            <span className="text-[11px] text-amber-700">Beneficiaries &amp; UN SDGs</span>
-                          </div>
-                          <div className="p-4 rounded-xl bg-teal-50/70 border border-teal-100">
-                            <span className="text-xs text-teal-800 font-semibold">Average Financial</span>
-                            <div className="text-2xl font-black text-teal-900 mt-1">{stats.avgFin} / 100</div>
-                            <span className="text-[11px] text-teal-700">Traction &amp; Capital Efficiency</span>
-                          </div>
-                        </div>
-
-                        {/* Top Performers Comparison Bar */}
-                        <h4 className="font-bold text-slate-900 text-xs uppercase text-slate-500 mb-3">
-                          Top 5 Ranked Ventures Comparison
-                        </h4>
-                        <div className="space-y-3">
-                          {rankedStartups.filter(s => s.isAssessed).slice(0, 5).map(item => (
-                            <div key={item.id} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                              <div className="flex justify-between items-center text-xs font-semibold mb-1">
-                                <span className="text-slate-900">#{item.rank} {item.name} ({getCategoryName(item.category)})</span>
-                                <span className="text-emerald-700 font-bold">{item.overallScore.toFixed(2)} pts</span>
-                              </div>
-                              <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                                <div
-                                  className="bg-slate-900 h-full rounded-full transition-all duration-500"
-                                  style={{ width: `${item.overallScore}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </main>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             )}
+
+            {/* =============================================================
+                SECTION 2: STARTUPS DIRECTORY (Full List & Search)
+                ============================================================= */}
+            {currentNav === 'startups' && (
+              <div className="space-y-4">
+                {/* Search & Filter Bar */}
+                <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
+                    <div className="relative flex-1 min-w-[200px]">
+                      <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                      <input
+                        type="text"
+                        placeholder="Search by startup name, founder, or location..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition"
+                      />
+                    </div>
+
+                    <select
+                      value={filterCategory}
+                      onChange={e => setFilterCategory(e.target.value)}
+                      className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 cursor-pointer"
+                    >
+                      <option value="">All Categories</option>
+                      <option value="TechStartup">Tech Startups</option>
+                      <option value="GreenStartup">Green Startups</option>
+                      <option value="HealthStartup">Health Startups</option>
+                      <option value="SocialStartup">Social Startups</option>
+                    </select>
+
+                    {(searchQuery || filterCategory) && (
+                      <button
+                        onClick={() => {
+                          setSearchQuery('');
+                          setFilterCategory('');
+                        }}
+                        className="text-xs text-slate-500 hover:text-slate-800 underline transition cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="text-xs text-slate-500">
+                    Showing <span className="font-semibold text-slate-800">{rankedStartups.length}</span> of {startups.length} records
+                  </div>
+                </div>
+
+                {/* Startups Table */}
+                <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200/80 font-medium">
+                        <tr>
+                          <th className="py-3 px-4">Startup</th>
+                          <th className="py-3 px-3">Category</th>
+                          <th className="py-3 px-3">Founder &amp; Location</th>
+                          <th className="py-3 px-3">Scores (E | I | S | F)</th>
+                          <th className="py-3 px-3">Overall Score</th>
+                          <th className="py-3 px-3">Status</th>
+                          <th className="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {rankedStartups.map(s => (
+                          <tr key={s.id} className="hover:bg-slate-50/70 transition">
+                            <td className="py-3.5 px-4">
+                              <button
+                                onClick={() => setDossierStartup(s)}
+                                className="font-semibold text-slate-900 hover:text-emerald-600 transition text-left cursor-pointer"
+                              >
+                                {s.name}
+                              </button>
+                              <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1 max-w-xs">{s.description}</div>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {getCategoryBadge(s.category)}
+                            </td>
+                            <td className="py-3.5 px-3">
+                              <div className="font-medium text-slate-800">{s.founderName}</div>
+                              <div className="text-[11px] text-slate-500">{s.location}</div>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {s.isAssessed ? (
+                                <div className="flex items-center gap-1 font-mono text-[11px]">
+                                  <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200/60" title="Environmental">
+                                    E:{s.environmentalScore.toFixed(0)}
+                                  </span>
+                                  <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200/60" title="Innovation">
+                                    I:{s.innovationScore.toFixed(0)}
+                                  </span>
+                                  <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200/60" title="Social">
+                                    S:{s.socialImpactScore.toFixed(0)}
+                                  </span>
+                                  <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded border border-teal-200/60" title="Financial">
+                                    F:{s.financialViabilityScore.toFixed(0)}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-slate-400 italic">Not evaluated</span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {s.isAssessed ? (
+                                <span className="font-bold text-slate-900 text-sm">
+                                  {s.overallScore.toFixed(2)}
+                                </span>
+                              ) : (
+                                <span className="text-slate-400">&ndash;</span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {s.isAssessed ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Assessed
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                  Pending
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="inline-flex items-center gap-1">
+                                <button
+                                  onClick={() => setDossierStartup(s)}
+                                  className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Details"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => openAssessmentModal(s)}
+                                  className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition cursor-pointer"
+                                  title="Evaluate Assessment"
+                                >
+                                  <Sliders className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => openEditForm(s)}
+                                  className="p-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition cursor-pointer"
+                                  title="Edit Details"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteStartup(s.id, s.name)}
+                                  className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                  title="Delete Record"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+
+                        {rankedStartups.length === 0 && (
+                          <tr>
+                            <td colSpan={7} className="py-12 text-center text-slate-400">
+                              No startups matched the search criteria. Try adjusting filters or search terms.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* =============================================================
+                SECTION 3: ASSESSMENT WORKFLOW (Overview & Evaluation Hub)
+                ============================================================= */}
+            {currentNav === 'assessments' && (
+              <div className="space-y-6">
+                <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-sm font-semibold text-slate-900">Sustainability Assessment Matrix</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Standardized ESG scoring framework applying equal 25% weights across Environmental, Innovation, Social, and Financial dimensions.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500">
+                      Formula: <code className="bg-slate-100 text-slate-800 px-2 py-1 rounded font-mono text-[11px]">(E + I + S + F) / 4</code>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Startups Assessment Queue Table */}
+                <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200/80 font-medium">
+                        <tr>
+                          <th className="py-3 px-4">Startup</th>
+                          <th className="py-3 px-3">Category</th>
+                          <th className="py-3 px-3">Current Score</th>
+                          <th className="py-3 px-3">Status</th>
+                          <th className="py-3 px-4 text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {startups.map(s => (
+                          <tr key={s.id} className="hover:bg-slate-50/70 transition">
+                            <td className="py-3.5 px-4 font-semibold text-slate-900">
+                              {s.name}
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {getCategoryBadge(s.category)}
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {s.isAssessed ? (
+                                <span className="font-bold text-slate-900">{s.overallScore.toFixed(2)} / 100</span>
+                              ) : (
+                                <span className="text-slate-400 italic">Pending evaluation</span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {s.isAssessed ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Assessed
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                  Pending Review
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <button
+                                onClick={() => openAssessmentModal(s)}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition cursor-pointer"
+                              >
+                                <Sliders className="w-3.5 h-3.5" />
+                                <span>{s.isAssessed ? 'Re-Evaluate' : 'Evaluate'}</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* =============================================================
+                SECTION 4: RANKINGS & LEADERBOARD
+                ============================================================= */}
+            {currentNav === 'rankings' && (
+              <div className="space-y-6">
+                {/* Ranking Methodology Banner */}
+                <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start gap-3.5">
+                  <div className="p-2.5 rounded-lg bg-emerald-50 text-emerald-700 shrink-0">
+                    <Trophy className="w-5 h-5" />
+                  </div>
+                  <div className="text-xs">
+                    <h2 className="text-sm font-semibold text-slate-900">Deterministic Multi-Criteria Ranking Algorithm</h2>
+                    <p className="text-slate-500 mt-1 leading-relaxed">
+                      Ventures are ordered primarily by <strong>Overall Score (Descending)</strong>. Ties are resolved deterministically in sequential order:
+                      <span className="font-semibold text-emerald-700"> 1. Environmental Score</span> &rarr;
+                      <span className="font-semibold text-blue-700"> 2. Innovation Score</span> &rarr;
+                      <span className="font-semibold text-amber-700"> 3. Social Impact Score</span> &rarr;
+                      <span className="font-semibold text-teal-700"> 4. Financial Viability</span> &rarr;
+                      <span className="font-semibold text-slate-800"> 5. Alphabetical Name</span>.
+                      Unassessed startups are sorted at the bottom with pending status.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Top 3 Podium Highlights */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {rankedStartups.filter(s => s.isAssessed).slice(0, 3).map((item, idx) => {
+                    const badgeStyles = [
+                      { rank: '#1', border: 'border-amber-300 bg-amber-50/30', badge: 'bg-amber-400 text-slate-900', label: '1st Rank Leader' },
+                      { rank: '#2', border: 'border-slate-300 bg-slate-50/40', badge: 'bg-slate-400 text-white', label: '2nd Place' },
+                      { rank: '#3', border: 'border-amber-600/30 bg-amber-50/20', badge: 'bg-amber-700 text-white', label: '3rd Place' }
+                    ][idx];
+
+                    return (
+                      <div key={item.id} className={`p-5 rounded-xl border ${badgeStyles.border} bg-white shadow-sm flex flex-col justify-between`}>
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <span className={`w-7 h-7 rounded-full ${badgeStyles.badge} flex items-center justify-center font-bold text-xs`}>
+                              {badgeStyles.rank}
+                            </span>
+                            {getCategoryBadge(item.category)}
+                          </div>
+                          <h3 className="font-bold text-slate-900 text-base">{item.name}</h3>
+                          <p className="text-xs text-slate-500 mt-0.5">{item.founderName} &bull; {item.location}</p>
+                        </div>
+
+                        <div className="mt-5 pt-3 border-t border-slate-100 flex items-baseline justify-between">
+                          <span className="text-xs text-slate-500">Composite Score</span>
+                          <span className="text-xl font-extrabold text-emerald-700">
+                            {item.overallScore.toFixed(2)} <span className="text-xs font-normal text-slate-400">/ 100</span>
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Full Rankings Table */}
+                <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200/80 font-medium">
+                        <tr>
+                          <th className="py-3 px-4 text-center w-14">Rank</th>
+                          <th className="py-3 px-3">Startup Name</th>
+                          <th className="py-3 px-3">Sector</th>
+                          <th className="py-3 px-3 text-center">Environmental (25%)</th>
+                          <th className="py-3 px-3 text-center">Innovation (25%)</th>
+                          <th className="py-3 px-3 text-center">Social (25%)</th>
+                          <th className="py-3 px-3 text-center">Financial (25%)</th>
+                          <th className="py-3 px-3 text-center font-bold text-slate-900">Overall Score</th>
+                          <th className="py-3 px-4 text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {rankedStartups.map(s => (
+                          <tr key={s.id} className={`hover:bg-slate-50/70 transition ${s.rank === 1 ? 'bg-amber-50/20' : ''}`}>
+                            <td className="py-3.5 px-4 text-center">
+                              {s.rank ? (
+                                <span className={`inline-flex items-center justify-center font-bold rounded-full w-6 h-6 text-xs ${
+                                  s.rank === 1 ? 'bg-amber-400 text-slate-950 font-black' :
+                                  s.rank === 2 ? 'bg-slate-200 text-slate-800' :
+                                  s.rank === 3 ? 'bg-amber-100 text-amber-900' :
+                                  'text-slate-600'
+                                }`}>
+                                  {s.rank}
+                                </span>
+                              ) : (
+                                <span className="text-[11px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-mono">
+                                  Pending
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-3 font-semibold text-slate-900">
+                              <button
+                                onClick={() => setDossierStartup(s)}
+                                className="hover:text-emerald-600 transition cursor-pointer text-left"
+                              >
+                                {s.name}
+                              </button>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {getCategoryBadge(s.category)}
+                            </td>
+                            <td className="py-3.5 px-3 text-center font-mono">
+                              {s.isAssessed ? s.environmentalScore.toFixed(1) : '&ndash;'}
+                            </td>
+                            <td className="py-3.5 px-3 text-center font-mono">
+                              {s.isAssessed ? s.innovationScore.toFixed(1) : '&ndash;'}
+                            </td>
+                            <td className="py-3.5 px-3 text-center font-mono">
+                              {s.isAssessed ? s.socialImpactScore.toFixed(1) : '&ndash;'}
+                            </td>
+                            <td className="py-3.5 px-3 text-center font-mono">
+                              {s.isAssessed ? s.financialViabilityScore.toFixed(1) : '&ndash;'}
+                            </td>
+                            <td className="py-3.5 px-3 text-center">
+                              {s.isAssessed ? (
+                                <span className="inline-block px-2.5 py-1 rounded-full font-bold text-xs bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  {s.overallScore.toFixed(2)}
+                                </span>
+                              ) : (
+                                <span className="text-slate-400 italic">Unassessed</span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="inline-flex items-center gap-1">
+                                <button
+                                  onClick={() => setDossierStartup(s)}
+                                  className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Details"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => openAssessmentModal(s)}
+                                  className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition cursor-pointer"
+                                  title="Evaluate"
+                                >
+                                  <Sliders className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
-        )}
-
-        {/* ========================================================
-            TAB 2: JAVA PBL CODEBASE EXPLORER
-            ======================================================== */}
-        {activeTab === 'code' && (
-          <JavaCodebaseExplorer />
-        )}
-
-        {/* ========================================================
-            TAB 3: VIVA VOCE & EVALUATION GUIDE
-            ======================================================== */}
-        {activeTab === 'viva' && (
-          <VivaVoceGuide />
-        )}
+        </main>
       </div>
 
-      {/* ========================================================
-          MODAL: SUSTAINABILITY ASSESSMENT FORM
-          ======================================================== */}
+      {/* =====================================================================
+          MODAL: SUSTAINABILITY ASSESSMENT ENGINE
+          ===================================================================== */}
       {isAssessmentOpen && assessmentTarget && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-scale-up">
-            <div className="bg-slate-900 text-white p-4 flex items-center justify-between">
+            <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-base text-white">Sustainability Assessment Engine (Figure 5.4 – Startup Assessment)</h3>
-                <p className="text-xs text-slate-400">
-                  Evaluating <strong>{assessmentTarget.name}</strong> ({getCategoryName(assessmentTarget.category)})
+                <h3 className="font-bold text-base text-white">Sustainability Assessment</h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Evaluating <strong>{assessmentTarget.name}</strong> ({getCategoryLabel(assessmentTarget.category)})
                 </p>
               </div>
               <button
                 onClick={() => setIsAssessmentOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded"
+                className="text-slate-400 hover:text-white p-1 rounded-lg transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-900">
-                <strong>Standard Equal Weighting (25% Each):</strong> Overall Score = (Environmental + Innovation + Social + Financial) / 4
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 flex items-center justify-between">
+                <span>Standard Equal Weighting (25% per pillar)</span>
+                <code className="font-mono bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">
+                  (E + I + S + F) / 4
+                </code>
               </div>
 
-              {/* Slider 1: Environmental */}
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              {/* Pillar 1: Environmental */}
+              <div className="p-4 bg-slate-50/70 border border-slate-200 rounded-xl space-y-2.5">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-emerald-800 flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-emerald-600" /> A. Environmental Sustainability (25%)
+                  <span className="font-semibold text-emerald-800 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-emerald-600" /> Environmental Sustainability (25%)
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <input
                       type="number"
                       min={0}
                       max={100}
                       value={evalEnv}
                       onChange={e => setEvalEnv(Math.min(100, Math.max(0, Number(e.target.value))))}
-                      className="w-16 px-2 py-1 text-xs text-right font-mono font-bold border border-slate-300 rounded"
+                      className="w-16 px-2 py-1 text-xs text-right font-mono font-bold bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
-                    <span className="text-slate-500">/ 100</span>
+                    <span className="text-slate-400">/ 100</span>
                   </div>
                 </div>
                 <input
@@ -1599,25 +1628,25 @@ export default function App() {
                   onChange={e => setEvalEnv(Number(e.target.value))}
                   className="w-full accent-emerald-600 cursor-pointer"
                 />
-                <p className="text-[11px] text-slate-500">Carbon offset, lifecycle circularity, renewable energy adoption, and clean manufacturing.</p>
+                <p className="text-[11px] text-slate-500">Carbon offset, circular lifecycle, renewable energy adoption, and waste minimization.</p>
               </div>
 
-              {/* Slider 2: Innovation */}
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              {/* Pillar 2: Innovation */}
+              <div className="p-4 bg-slate-50/70 border border-slate-200 rounded-xl space-y-2.5">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-blue-800 flex items-center gap-1.5">
-                    <Code2 className="w-4 h-4 text-blue-600" /> B. Innovation &amp; Technology Moat (25%)
+                  <span className="font-semibold text-blue-800 flex items-center gap-1.5">
+                    <Zap className="w-4 h-4 text-blue-600" /> Innovation &amp; Technology Moat (25%)
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <input
                       type="number"
                       min={0}
                       max={100}
                       value={evalInnov}
                       onChange={e => setEvalInnov(Math.min(100, Math.max(0, Number(e.target.value))))}
-                      className="w-16 px-2 py-1 text-xs text-right font-mono font-bold border border-slate-300 rounded"
+                      className="w-16 px-2 py-1 text-xs text-right font-mono font-bold bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
-                    <span className="text-slate-500">/ 100</span>
+                    <span className="text-slate-400">/ 100</span>
                   </div>
                 </div>
                 <input
@@ -1628,25 +1657,25 @@ export default function App() {
                   onChange={e => setEvalInnov(Number(e.target.value))}
                   className="w-full accent-blue-600 cursor-pointer"
                 />
-                <p className="text-[11px] text-slate-500">Patents filed/granted, R&amp;D originality, software architecture, and technical scalability.</p>
+                <p className="text-[11px] text-slate-500">Patents filed/granted, R&amp;D depth, algorithm defensibility, and technological scalability.</p>
               </div>
 
-              {/* Slider 3: Social Impact */}
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              {/* Pillar 3: Social Impact */}
+              <div className="p-4 bg-slate-50/70 border border-slate-200 rounded-xl space-y-2.5">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-amber-800 flex items-center gap-1.5">
-                    <Globe className="w-4 h-4 text-amber-600" /> C. Social Impact &amp; Inclusion (25%)
+                  <span className="font-semibold text-amber-800 flex items-center gap-1.5">
+                    <Globe className="w-4 h-4 text-amber-600" /> Social Impact &amp; Inclusion (25%)
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <input
                       type="number"
                       min={0}
                       max={100}
                       value={evalSoc}
                       onChange={e => setEvalSoc(Math.min(100, Math.max(0, Number(e.target.value))))}
-                      className="w-16 px-2 py-1 text-xs text-right font-mono font-bold border border-slate-300 rounded"
+                      className="w-16 px-2 py-1 text-xs text-right font-mono font-bold bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
-                    <span className="text-slate-500">/ 100</span>
+                    <span className="text-slate-400">/ 100</span>
                   </div>
                 </div>
                 <input
@@ -1657,25 +1686,25 @@ export default function App() {
                   onChange={e => setEvalSoc(Number(e.target.value))}
                   className="w-full accent-amber-600 cursor-pointer"
                 />
-                <p className="text-[11px] text-slate-500">Beneficiaries reached, UN SDG alignment, community health upliftment, and ethical governance.</p>
+                <p className="text-[11px] text-slate-500">Beneficiaries reached, UN SDG alignment, community upliftment, and ethical governance.</p>
               </div>
 
-              {/* Slider 4: Financial Viability */}
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              {/* Pillar 4: Financial Viability */}
+              <div className="p-4 bg-slate-50/70 border border-slate-200 rounded-xl space-y-2.5">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-teal-800 flex items-center gap-1.5">
-                    <TrendingUp className="w-4 h-4 text-teal-600" /> D. Financial Viability &amp; Traction (25%)
+                  <span className="font-semibold text-teal-800 flex items-center gap-1.5">
+                    <TrendingUp className="w-4 h-4 text-teal-600" /> Financial Viability &amp; Traction (25%)
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <input
                       type="number"
                       min={0}
                       max={100}
                       value={evalFin}
                       onChange={e => setEvalFin(Math.min(100, Math.max(0, Number(e.target.value))))}
-                      className="w-16 px-2 py-1 text-xs text-right font-mono font-bold border border-slate-300 rounded"
+                      className="w-16 px-2 py-1 text-xs text-right font-mono font-bold bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500"
                     />
-                    <span className="text-slate-500">/ 100</span>
+                    <span className="text-slate-400">/ 100</span>
                   </div>
                 </div>
                 <input
@@ -1686,44 +1715,45 @@ export default function App() {
                   onChange={e => setEvalFin(Number(e.target.value))}
                   className="w-full accent-teal-600 cursor-pointer"
                 />
-                <p className="text-[11px] text-slate-500">Runway longevity, commercial traction, unit margins, and capital efficiency.</p>
+                <p className="text-[11px] text-slate-500">Runway stability, commercial contract traction, unit margins, and capital efficiency.</p>
               </div>
 
-              {/* Live Composite Computation Box */}
+              {/* Real-time Computed Score Card */}
               <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
-                <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">Live Computed Overall Score</span>
+                <div className="text-[11px] font-semibold text-emerald-800 uppercase tracking-wide">Live Computed Overall Score</div>
                 <div className="text-3xl font-extrabold text-emerald-700 my-1">
-                  {computedOverallScore.toFixed(2)} <span className="text-base font-normal text-emerald-900">/ 100</span>
+                  {computedOverallScore.toFixed(2)} <span className="text-sm font-normal text-emerald-900">/ 100</span>
                 </div>
-                <span className="text-xs text-emerald-800">
-                  {computedOverallScore >= 85 ? 'Tier 1: ESG Leader / Exceptional' :
-                   computedOverallScore >= 70 ? 'Tier 2: Strong Sustainability' :
-                   computedOverallScore >= 50 ? 'Tier 3: Moderate / Developing' : 'Tier 4: High ESG Risk'}
+                <span className="text-xs font-medium text-emerald-800">
+                  {computedOverallScore >= 85 ? 'Tier 1: ESG Leader / Exceptional Performance' :
+                   computedOverallScore >= 70 ? 'Tier 2: Strong Sustainability Compliance' :
+                   computedOverallScore >= 50 ? 'Tier 3: Moderate / Developing Transition' :
+                   'Tier 4: Elevated ESG Risk Factor'}
                 </span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Qualitative Evaluator Notes</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Assessment Observations &amp; Notes</label>
                 <textarea
                   rows={2}
                   value={evalNotes}
                   onChange={e => setEvalNotes(e.target.value)}
                   placeholder="Record qualitative audit evidence, certifications, patents, or clinical milestones..."
-                  className="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full text-xs p-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white transition"
                 />
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-2.5">
               <button
                 onClick={() => setIsAssessmentOpen(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900"
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
-                onClick={saveAssessment}
-                className="px-5 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm"
+                onClick={handleSaveAssessment}
+                className="px-5 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-sm transition cursor-pointer"
               >
                 Save &amp; Update Rankings
               </button>
@@ -1732,54 +1762,55 @@ export default function App() {
         </div>
       )}
 
-      {/* ========================================================
+      {/* =====================================================================
           MODAL: ADD / EDIT STARTUP
-          ======================================================== */}
+          ===================================================================== */}
       {isFormOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden">
-            <div className="bg-slate-900 text-white p-4 flex items-center justify-between">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-scale-up">
+            <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-base text-white">
-                  {editingStartup ? 'Edit Startup Details' : 'Register New Startup (Figure 5.3 – Add Startup Interface)'}
+                  {editingStartup ? 'Edit Startup Details' : 'Register New Startup'}
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Stores organizational parameters and polymorphic category attributes
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Record venture parameters and industry category domain metrics
                 </p>
               </div>
               <button
                 onClick={() => setIsFormOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded"
+                className="text-slate-400 hover:text-white p-1 rounded-lg transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={saveStartupForm} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-              {formError && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
-                  {formError}
+            <form onSubmit={handleSaveStartup} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+              {formValidationError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+                  <span>{formValidationError}</span>
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Startup Name *</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Startup Name *</label>
                   <input
                     type="text"
                     value={formName}
                     onChange={e => setFormName(e.target.value)}
                     placeholder="e.g. EcoLoop Packaging"
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white transition"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Category Domain *</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Category Domain *</label>
                   <select
                     value={formCategory}
                     onChange={e => setFormCategory(e.target.value as StartupCategory)}
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none"
+                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white transition cursor-pointer"
                   >
                     <option value="TechStartup">Tech Startup</option>
                     <option value="GreenStartup">Green Startup</option>
@@ -1790,70 +1821,70 @@ export default function App() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Venture Description &amp; Mission *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Venture Description &amp; Mission *</label>
                 <textarea
                   rows={2}
                   value={formDesc}
                   onChange={e => setFormDesc(e.target.value)}
-                  placeholder="Overview of technology, solutions, and environmental/social value proposition..."
-                  className="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  placeholder="Overview of core technology, products, and environmental/social value proposition..."
+                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white transition"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Founder / Leader *</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Founder / Leader *</label>
                   <input
                     type="text"
                     value={formFounder}
                     onChange={e => setFormFounder(e.target.value)}
-                    placeholder="Dr. Ananya Sharma"
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none"
+                    placeholder="e.g. Dr. Ananya Sharma"
+                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white transition"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Location / HQ *</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Location / HQ *</label>
                   <input
                     type="text"
                     value={formLocation}
                     onChange={e => setFormLocation(e.target.value)}
-                    placeholder="Bengaluru, Karnataka"
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none"
+                    placeholder="e.g. Bengaluru, Karnataka"
+                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white transition"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Year Founded *</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Year Founded *</label>
                   <input
                     type="number"
                     value={formYear}
                     onChange={e => setFormYear(Number(e.target.value))}
                     min={1990}
                     max={2030}
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none"
+                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white transition"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Contact Email *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Contact Email *</label>
                 <input
                   type="email"
                   value={formEmail}
                   onChange={e => setFormEmail(e.target.value)}
                   placeholder="contact@startup.com"
-                  className="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none"
+                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white transition"
                   required
                 />
               </div>
 
-              {/* Polymorphic Category Attributes */}
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
-                  Domain Polymorphic Attributes ({getCategoryName(formCategory)})
+              {/* Category-Specific Domain Fields */}
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                <span className="text-xs font-semibold text-slate-800 uppercase tracking-wide">
+                  Domain Attributes ({getCategoryLabel(formCategory)})
                 </span>
 
                 {formCategory === 'TechStartup' && (
@@ -1865,16 +1896,16 @@ export default function App() {
                         value={formTechStack}
                         onChange={e => setFormTechStack(e.target.value)}
                         placeholder="Rust, PyTorch, Distributed Cloud"
-                        className="w-full p-1.5 border border-slate-300 rounded"
+                        className="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-600 mb-1">Patents Granted / Filed</label>
+                      <label className="block text-[11px] text-slate-600 mb-1">Granted / Filed Patents</label>
                       <input
                         type="number"
                         value={formPatents}
                         onChange={e => setFormPatents(Number(e.target.value))}
-                        className="w-full p-1.5 border border-slate-300 rounded"
+                        className="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"
                       />
                     </div>
                   </div>
@@ -1890,7 +1921,7 @@ export default function App() {
                         value={formCarbonOffset}
                         onChange={e => setFormCarbonOffset(Number(e.target.value))}
                         placeholder="450"
-                        className="w-full p-1.5 border border-slate-300 rounded"
+                        className="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"
                       />
                     </div>
                     <div>
@@ -1901,7 +1932,7 @@ export default function App() {
                         value={formRenewable}
                         onChange={e => setFormRenewable(Number(e.target.value))}
                         placeholder="90"
-                        className="w-full p-1.5 border border-slate-300 rounded"
+                        className="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"
                       />
                     </div>
                   </div>
@@ -1916,12 +1947,12 @@ export default function App() {
                         value={formClinical}
                         onChange={e => setFormClinical(e.target.value)}
                         placeholder="Phase II Validation"
-                        className="w-full p-1.5 border border-slate-300 rounded"
+                        className="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"
                       />
                     </div>
                     <div className="flex items-center gap-2 pt-4">
-                      <input type="checkbox" id="hipaa" defaultChecked className="accent-emerald-600" />
-                      <label htmlFor="hipaa" className="text-[11px] text-slate-700">HIPAA / CDSCO Compliant</label>
+                      <input type="checkbox" id="hipaa" defaultChecked className="accent-emerald-600 cursor-pointer" />
+                      <label htmlFor="hipaa" className="text-[11px] text-slate-700 cursor-pointer">HIPAA / CDSCO Compliant</label>
                     </div>
                   </div>
                 )}
@@ -1935,7 +1966,7 @@ export default function App() {
                         value={formBeneficiaries}
                         onChange={e => setFormBeneficiaries(Number(e.target.value))}
                         placeholder="25000"
-                        className="w-full p-1.5 border border-slate-300 rounded"
+                        className="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"
                       />
                     </div>
                     <div>
@@ -1945,26 +1976,26 @@ export default function App() {
                         value={formSdg}
                         onChange={e => setFormSdg(e.target.value)}
                         placeholder="SDG 6, SDG 7"
-                        className="w-full p-1.5 border border-slate-300 rounded"
+                        className="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"
                       />
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="pt-3 border-t border-slate-200 flex justify-end gap-2">
+              <div className="pt-3 border-t border-slate-200 flex justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm"
+                  className="px-5 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-sm transition cursor-pointer"
                 >
-                  {editingStartup ? 'Update Startup' : 'Save to Database'}
+                  {editingStartup ? 'Save Changes' : 'Register Startup'}
                 </button>
               </div>
             </form>
@@ -1972,20 +2003,18 @@ export default function App() {
         </div>
       )}
 
-      {/* ========================================================
-          MODAL: STARTUP PROFILE DOSSIER
-          ======================================================== */}
+      {/* =====================================================================
+          MODAL: STARTUP PROFILE DOSSIER (View Details)
+          ===================================================================== */}
       {dossierStartup && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-scale-up">
-            <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
+            <div className="bg-slate-900 text-white px-6 py-5 flex items-center justify-between">
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${getCategoryBadgeClass(dossierStartup.category)}`}>
-                    {getCategoryName(dossierStartup.category)}
-                  </span>
+                <div className="flex items-center gap-2 mb-1.5">
+                  {getCategoryBadge(dossierStartup.category)}
                   {dossierStartup.rank && (
-                    <span className="text-[10px] bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded">
+                    <span className="text-[10px] bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded-full">
                       Rank #{dossierStartup.rank}
                     </span>
                   )}
@@ -1997,7 +2026,7 @@ export default function App() {
               </div>
               <button
                 onClick={() => setDossierStartup(null)}
-                className="text-slate-400 hover:text-white p-1 rounded"
+                className="text-slate-400 hover:text-white p-1 rounded-lg transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2005,42 +2034,42 @@ export default function App() {
 
             <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto text-xs">
               <div>
-                <h4 className="font-bold text-slate-900 uppercase text-[11px] mb-1">Executive Summary</h4>
+                <h4 className="font-semibold text-slate-800 uppercase text-[11px] mb-1">Company Overview</h4>
                 <p className="text-slate-600 leading-relaxed">{dossierStartup.description}</p>
               </div>
 
               {/* ESG Score Breakdown */}
               <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-                <div className="flex items-baseline justify-between border-b border-slate-200 pb-2">
-                  <span className="font-bold text-slate-900 text-sm">Overall Sustainability Score</span>
+                <div className="flex items-baseline justify-between border-b border-slate-200/80 pb-2.5">
+                  <span className="font-semibold text-slate-800">Overall Sustainability Score</span>
                   <span className="text-2xl font-black text-emerald-700">
                     {dossierStartup.isAssessed ? dossierStartup.overallScore.toFixed(2) : '0.00'}
-                    <span className="text-xs font-normal text-slate-500 ml-1">/ 100</span>
+                    <span className="text-xs font-normal text-slate-400 ml-1">/ 100</span>
                   </span>
                 </div>
 
                 {dossierStartup.isAssessed ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center">
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-[10px] text-slate-500 font-medium">Environmental (25%)</span>
-                      <div className="text-base font-extrabold text-emerald-700">{dossierStartup.environmentalScore.toFixed(1)}</div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1 text-center">
+                    <div className="p-3 bg-white rounded-lg border border-slate-200/80">
+                      <span className="text-[10px] text-slate-500">Environmental (25%)</span>
+                      <div className="text-base font-bold text-emerald-700 mt-0.5">{dossierStartup.environmentalScore.toFixed(1)}</div>
                     </div>
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-[10px] text-slate-500 font-medium">Innovation (25%)</span>
-                      <div className="text-base font-extrabold text-blue-700">{dossierStartup.innovationScore.toFixed(1)}</div>
+                    <div className="p-3 bg-white rounded-lg border border-slate-200/80">
+                      <span className="text-[10px] text-slate-500">Innovation (25%)</span>
+                      <div className="text-base font-bold text-blue-700 mt-0.5">{dossierStartup.innovationScore.toFixed(1)}</div>
                     </div>
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-[10px] text-slate-500 font-medium">Social (25%)</span>
-                      <div className="text-base font-extrabold text-amber-700">{dossierStartup.socialImpactScore.toFixed(1)}</div>
+                    <div className="p-3 bg-white rounded-lg border border-slate-200/80">
+                      <span className="text-[10px] text-slate-500">Social Impact (25%)</span>
+                      <div className="text-base font-bold text-amber-700 mt-0.5">{dossierStartup.socialImpactScore.toFixed(1)}</div>
                     </div>
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-[10px] text-slate-500 font-medium">Financial (25%)</span>
-                      <div className="text-base font-extrabold text-teal-700">{dossierStartup.financialViabilityScore.toFixed(1)}</div>
+                    <div className="p-3 bg-white rounded-lg border border-slate-200/80">
+                      <span className="text-[10px] text-slate-500">Financial (25%)</span>
+                      <div className="text-base font-bold text-teal-700 mt-0.5">{dossierStartup.financialViabilityScore.toFixed(1)}</div>
                     </div>
                   </div>
                 ) : (
                   <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-center">
-                    This startup has not been formally evaluated yet.
+                    This startup has not received a formal sustainability assessment yet.
                   </div>
                 )}
               </div>
@@ -2048,8 +2077,8 @@ export default function App() {
               {/* Assessment Notes */}
               {dossierStartup.assessmentNotes && (
                 <div>
-                  <h4 className="font-bold text-slate-900 uppercase text-[11px] mb-1">Evaluator Notes</h4>
-                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-600 italic">
+                  <h4 className="font-semibold text-slate-800 uppercase text-[11px] mb-1">Evaluator Observations</h4>
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 italic">
                     "{dossierStartup.assessmentNotes}"
                   </div>
                 </div>
@@ -2072,499 +2101,27 @@ export default function App() {
 
             <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
               <button
-                onClick={() => deleteStartup(dossierStartup.id, dossierStartup.name)}
-                className="text-xs text-red-600 hover:text-red-800 font-semibold"
+                onClick={() => handleDeleteStartup(dossierStartup.id, dossierStartup.name)}
+                className="text-xs text-rose-600 hover:text-rose-800 font-semibold cursor-pointer"
               >
-                Delete Record
+                Delete Startup
               </button>
               <div className="flex gap-2">
                 <button
                   onClick={() => {
                     const target = dossierStartup;
                     setDossierStartup(null);
-                    openAssessment(target);
+                    openAssessmentModal(target);
                   }}
-                  className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-sm transition cursor-pointer"
                 >
-                  <Sliders className="w-3 h-3 inline mr-1" /> Evaluate Scores
+                  <Sliders className="w-3 h-3 inline mr-1" /> Evaluate Assessment
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-// ========================================================
-// SUB-COMPONENT: JAVA CODEBASE EXPLORER
-// ========================================================
-function JavaCodebaseExplorer() {
-  const [selectedFile, setSelectedFile] = useState<string>('Startup.java');
-  const [copied, setCopied] = useState(false);
-
-  const filesMap: Record<string, { path: string; category: string; content: string }> = {
-    'pom.xml': {
-      path: '/pom.xml',
-      category: 'Maven Build & Dependencies',
-      content: `<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.5</version>
-    </parent>
-    <groupId>com.sustainrank</groupId>
-    <artifactId>sustainrank</artifactId>
-    <version>1.0.0</version>
-    <name>SustainRank</name>
-    <description>Startup Sustainability Assessment and Ranking Platform - Harshini V & Nadhiya A</description>
-
-    <properties>
-        <java.version>17</java.version>
-    </properties>
-
-    <dependencies>
-        <!-- Spring Boot Web MVC & Thymeleaf UI -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-
-        <!-- Spring Data JPA & Persistent H2 Database -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Spring Security 6 with BCrypt -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <!-- JSR-380 Bean Validation -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-        <!-- Apache Commons CSV for RFC-4180 compliant export -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>1.10.0</version>
-        </dependency>
-    </dependencies>
-</project>`
-    },
-    'Startup.java': {
-      path: '/src/main/java/com/sustainrank/model/Startup.java',
-      category: 'OOP Inheritance & Encapsulation',
-      content: `package com.sustainrank.model;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.time.LocalDateTime;
-
-/**
- * Base Entity representing a Startup in the SustainRank ecosystem.
- *
- * Demonstrates:
- * - Encapsulation (private fields, controlled getters/setters)
- * - Object-Oriented Inheritance (Single-table JPA inheritance for subclasses)
- * - Data Integrity & Bean Validation (JSR-380)
- */
-@Entity
-@Table(name = "startups")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "startup_type", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue("GENERAL")
-public class Startup {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotBlank(message = "Startup name is required")
-    @Size(min = 2, max = 100)
-    @Column(nullable = false)
-    private String name;
-
-    @NotNull(message = "Category must be selected")
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StartupCategory category;
-
-    @NotBlank(message = "Description is required")
-    @Column(length = 1000, nullable = false)
-    private String description;
-
-    @NotBlank(message = "Founder name is required")
-    private String founderName;
-
-    @NotBlank(message = "Location is required")
-    private String location;
-
-    @NotNull(message = "Year established is required")
-    @Min(1900) @Max(2030)
-    private Integer yearEstablished;
-
-    @NotBlank(message = "Contact email is required")
-    @Email
-    private String contactEmail;
-
-    // Four core sustainability criteria (0.0 to 100.0)
-    private Double environmentalScore = 0.0;
-    private Double innovationScore = 0.0;
-    private Double socialImpactScore = 0.0;
-    private Double financialViabilityScore = 0.0;
-
-    // Derived overall score: (Env + Innov + Social + Financial) / 4.0
-    @Column(nullable = false)
-    private Double overallScore = 0.0;
-
-    @Column(nullable = false)
-    private Boolean isAssessed = false;
-
-    private String assessmentNotes;
-    private Boolean isDemo = false;
-
-    // Polymorphic method demonstrating OOP Abstraction and Polymorphism
-    public String getCategorySpecialization() {
-        return "General Startup";
-    }
-
-    // Getters, Setters, and JPA Lifecycle Hooks...
-}`
-    },
-    'GreenStartup.java': {
-      path: '/src/main/java/com/sustainrank/model/GreenStartup.java',
-      category: 'OOP Subclass Polymorphism',
-      content: `package com.sustainrank.model;
-
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-
-/**
- * Subclass representing environmental and clean-tech ventures.
- * Demonstrates OOP Inheritance and Polymorphic method overriding.
- */
-@Entity
-@DiscriminatorValue("GREEN")
-public class GreenStartup extends Startup {
-
-    private Double estimatedCarbonOffsetTons = 0.0;
-    private Double renewableEnergyPercentage = 0.0;
-
-    public GreenStartup() {
-        super();
-        setCategory(StartupCategory.GreenStartup);
-    }
-
-    @Override
-    public String getCategorySpecialization() {
-        return "Green Impact: " + estimatedCarbonOffsetTons +
-               " tons CO2 offset / yr (" + renewableEnergyPercentage + "% renewable)";
-    }
-
-    public Double getEstimatedCarbonOffsetTons() { return estimatedCarbonOffsetTons; }
-    public void setEstimatedCarbonOffsetTons(Double val) { this.estimatedCarbonOffsetTons = val; }
-
-    public Double getRenewableEnergyPercentage() { return renewableEnergyPercentage; }
-    public void setRenewableEnergyPercentage(Double val) { this.renewableEnergyPercentage = val; }
-}`
-    },
-    'SustainabilityScorer.java': {
-      path: '/src/main/java/com/sustainrank/service/SustainabilityScorer.java',
-      category: 'Interface & Strategy Pattern',
-      content: `package com.sustainrank.service;
-
-/**
- * Strategy interface defining calculation rules for composite sustainability scores.
- * Demonstrates OOP Abstraction and Interface Segregation.
- */
-public interface SustainabilityScorer {
-
-    /**
-     * Calculates the overall composite score from the four criteria.
-     * Equal weight of 25% each: (Env + Innov + Social + Financial) / 4.0
-     */
-    double calculateOverallScore(double environmental, double innovation, double social, double financial);
-
-    void validateScores(double environmental, double innovation, double social, double financial);
-
-    String getFormulaExplanation();
-}`
-    },
-    'StartupServiceImpl.java': {
-      path: '/src/main/java/com/sustainrank/service/impl/StartupServiceImpl.java',
-      category: 'Business Logic & Tie-Breaking',
-      content: `package com.sustainrank.service.impl;
-
-import com.sustainrank.model.*;
-import com.sustainrank.repository.StartupRepository;
-import com.sustainrank.service.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.*;
-
-@Service
-@Transactional
-public class StartupServiceImpl implements StartupService {
-
-    private final StartupRepository startupRepository;
-    private final SustainabilityScorer sustainabilityScorer;
-
-    /**
-     * Deterministic Ranking Comparator:
-     * 1. Overall Score (Descending)
-     * 2. Environmental Score (Descending) - Tie Breaker #1
-     * 3. Innovation Score (Descending) - Tie Breaker #2
-     * 4. Social Impact Score (Descending) - Tie Breaker #3
-     * 5. Financial Viability Score (Descending) - Tie Breaker #4
-     * 6. Startup Name (Ascending alphabetical) - Deterministic final tie breaker
-     */
-    public static final Comparator<Startup> RANKING_COMPARATOR = (s1, s2) -> {
-        int cmp = Double.compare(s2.getOverallScore(), s1.getOverallScore());
-        if (cmp != 0) return cmp;
-
-        cmp = Double.compare(s2.getEnvironmentalScore(), s1.getEnvironmentalScore());
-        if (cmp != 0) return cmp;
-
-        cmp = Double.compare(s2.getInnovationScore(), s1.getInnovationScore());
-        if (cmp != 0) return cmp;
-
-        cmp = Double.compare(s2.getSocialImpactScore(), s1.getSocialImpactScore());
-        if (cmp != 0) return cmp;
-
-        cmp = Double.compare(s2.getFinancialViabilityScore(), s1.getFinancialViabilityScore());
-        if (cmp != 0) return cmp;
-
-        return s1.getName().compareToIgnoreCase(s2.getName());
-    };
-
-    @Override
-    public Startup recordAssessment(AssessmentFormDto assessmentDto) {
-        Startup startup = getStartupById(assessmentDto.getStartupId());
-        double overall = sustainabilityScorer.calculateOverallScore(
-                assessmentDto.getEnvironmentalScore(),
-                assessmentDto.getInnovationScore(),
-                assessmentDto.getSocialImpactScore(),
-                assessmentDto.getFinancialViabilityScore());
-
-        startup.setEnvironmentalScore(assessmentDto.getEnvironmentalScore());
-        startup.setInnovationScore(assessmentDto.getInnovationScore());
-        startup.setSocialImpactScore(assessmentDto.getSocialImpactScore());
-        startup.setFinancialViabilityScore(assessmentDto.getFinancialViabilityScore());
-        startup.setOverallScore(overall);
-        startup.setIsAssessed(true);
-        startup.setAssessmentNotes(assessmentDto.getAssessmentNotes());
-
-        return startupRepository.save(startup);
-    }
-}`
-    },
-    'SecurityConfig.java': {
-      path: '/src/main/java/com/sustainrank/config/SecurityConfig.java',
-      category: 'Spring Security & Cryptography',
-      content: `package com.sustainrank.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.SecurityFilterChain;
-
-@Configuration
-public class SecurityConfig {
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        // BCryptPasswordEncoder hashes with cost factor 10 - NEVER plaintext
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/css/**", "/h2-console/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/dashboard", true)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutSuccessUrl("/login?logout=true")
-                .invalidateHttpSession(true)
-            );
-        return http.build();
-    }
-}`
-    },
-    'application.properties': {
-      path: '/src/main/resources/application.properties',
-      category: 'H2 Persistent File Configuration',
-      content: `# Application Name & Port
-spring.application.name=SustainRank
-server.port=8080
-
-# Persistent File H2 Database (Saved to disk in ./data/sustainrank.mv.db)
-spring.datasource.url=jdbc:h2:file:./data/sustainrank;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-
-# Hibernate Auto Schema Update
-spring.jpa.hibernate.ddl-auto=update
-
-# H2 Web Console URL
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
-
-# Demo Credentials for Spring Security
-sustainrank.security.demo-username=admin
-sustainrank.security.demo-password=admin123`
-    }
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(filesMap[selectedFile].content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <div className="flex-1 flex overflow-hidden bg-slate-900 text-slate-200">
-      {/* File Tree Sidebar */}
-      <aside className="w-72 bg-slate-950 border-r border-slate-800 p-4 flex flex-col shrink-0">
-        <div className="flex items-center gap-2 text-white font-bold text-sm mb-3">
-          <Code2 className="w-4 h-4 text-emerald-400" />
-          <span>Java Maven File Tree</span>
-        </div>
-        <div className="space-y-1 overflow-y-auto flex-1 text-xs">
-          {Object.entries(filesMap).map(([filename, meta]) => (
-            <button
-              key={filename}
-              onClick={() => setSelectedFile(filename)}
-              className={`w-full text-left p-2 rounded-lg transition ${
-                selectedFile === filename ? 'bg-emerald-600 text-white font-semibold' : 'hover:bg-slate-800 text-slate-300'
-              }`}
-            >
-              <div className="font-mono text-xs">{filename}</div>
-              <div className="text-[10px] opacity-75">{meta.category}</div>
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-4 p-3 bg-slate-900 rounded-lg border border-slate-800 text-[11px] text-slate-400">
-          <div className="font-semibold text-white mb-1">To run in IntelliJ or VS Code:</div>
-          <code className="text-emerald-400 block bg-slate-950 p-1.5 rounded font-mono text-[10px]">
-            mvn spring-boot:run
-          </code>
-        </div>
-      </aside>
-
-      {/* Code Viewer */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-slate-900">
-        <div className="bg-slate-800/80 px-4 py-2.5 border-b border-slate-700 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-emerald-400 font-semibold">{filesMap[selectedFile].path}</span>
-            <span className="text-slate-400">({filesMap[selectedFile].category})</span>
-          </div>
-          <button
-            onClick={handleCopy}
-            className="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-white rounded flex items-center gap-1.5 transition text-xs"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copied ? 'Copied!' : 'Copy Code'}</span>
-          </button>
-        </div>
-
-        <pre className="flex-1 p-4 font-mono text-xs overflow-auto text-slate-300 bg-slate-900/90 leading-relaxed selection:bg-emerald-800">
-          {filesMap[selectedFile].content}
-        </pre>
-      </main>
-    </div>
-  );
-}
-
-// ========================================================
-// SUB-COMPONENT: VIVA VOCE & FACULTY DEFENSE GUIDE
-// ========================================================
-function VivaVoceGuide() {
-  const qaList = [
-    {
-      q: "Q1. How does SustainRank satisfy the Java Object-Oriented Programming (OOP) requirements?",
-      a: "Encapsulation is enforced via private entity fields and JSR-380 bean validations. Inheritance is demonstrated through the base class Startup and subclasses TechStartup, GreenStartup, HealthStartup, and SocialStartup using JPA Single-Table inheritance. Polymorphism is implemented via getCategorySpecialization() overridden in subclasses. Abstraction is maintained using service and scorer interfaces (StartupService, SustainabilityScorer)."
-    },
-    {
-      q: "Q2. How is data persisted when the application shuts down or restarts?",
-      a: "We configured an embedded H2 database in persistent file mode via jdbc:h2:file:./data/sustainrank;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE. Instead of volatile in-memory storage, tables and records are committed to ./data/sustainrank.mv.db on the local file system."
-    },
-    {
-      q: "Q3. What is the mathematical scoring formula used?",
-      a: "All four criteria carry an equal weight of 25% (0.25): Overall Score = (Environmental + Innovation + Social Impact + Financial Viability) / 4.0. The computation is handled on the server side using DefaultSustainabilityScorer and rounded to 2 decimal places using BigDecimal."
-    },
-    {
-      q: "Q4. How does the deterministic tie-breaking logic work in Java?",
-      a: "In StartupServiceImpl.java, a custom Comparator<Startup> evaluates scores sequentially: 1. Overall Score DESC, 2. Environmental Score DESC (sustainability priority), 3. Innovation Score DESC, 4. Social Impact Score DESC, 5. Financial Viability DESC, and 6. Case-insensitive alphabetical name ASC."
-    },
-    {
-      q: "Q5. How does Spring Security protect credentials?",
-      a: "Passwords are never stored or compared in plaintext. BCryptPasswordEncoder hashes user passwords with a salt and cost factor of 10. Spring Security filters inspect sessions and enforce authorization on protected endpoints."
-    },
-    {
-      q: "Q6. How are unassessed startups handled in rankings?",
-      a: "Unassessed ventures are designated with status 'Pending Assessment' and assigned a rank of null. They are sorted at the bottom of the leaderboard to prevent misleading rank inflation before official verification."
-    },
-    {
-      q: "Q7. What design pattern is used in the sustainability assessment service?",
-      a: "The Strategy Design Pattern: the SustainabilityScorer interface defines the algorithm contract, and DefaultSustainabilityScorer provides the concrete equal-weight implementation. If weighted scoring rules are added in the future, new strategies can be injected without altering consumer services."
-    }
-  ];
-
-  return (
-    <div className="flex-1 overflow-y-auto bg-slate-100 p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 shadow-md">
-          <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1">
-            <HelpCircle className="w-4 h-4" /> B.Tech IT 2nd Year, 3rd Semester PBL Review
-          </div>
-          <h2 className="text-xl font-bold text-white mb-2">Faculty Viva Voce &amp; Project Defense Guide</h2>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            Prepared for <strong>Harshini V</strong> and <strong>Nadhiya A</strong> to confidently address technical inquiries from examiners regarding architecture, OOP tenets, database persistence, and scoring models.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {qaList.map((item, index) => (
-            <div key={index} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-              <h3 className="font-bold text-slate-900 text-sm mb-2 text-emerald-900">{item.q}</h3>
-              <p className="text-xs text-slate-700 leading-relaxed">{item.a}</p>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
