@@ -32,7 +32,9 @@ import {
   Calendar,
   X,
   Copy,
-  Check
+  Check,
+  User,
+  Lock
 } from 'lucide-react';
 
 // Types matching Java Domain Model
@@ -200,11 +202,11 @@ export default function App() {
   // App navigation state
   const [activeTab, setActiveTab] = useState<'app' | 'code' | 'viva'>('app');
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'startups' | 'rankings' | 'analytics'>('dashboard');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // Login form state
-  const [loginUsername, setLoginUsername] = useState('admin');
-  const [loginPassword, setLoginPassword] = useState('admin123');
+  // Login form state (Application starts on Login screen)
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
   // Startups database state with localStorage persistence
@@ -346,17 +348,21 @@ export default function App() {
   // Actions
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginUsername === 'admin' && loginPassword === 'admin123') {
+    if (loginUsername.trim() === 'admin' && loginPassword === 'admin123') {
       setIsAuthenticated(true);
+      setCurrentPage('dashboard');
       setLoginError('');
-      showToast('Logged in successfully as Administrator.');
+      showToast('Logged in successfully as Administrator. Navigating to Executive Dashboard.');
     } else {
-      setLoginError('Invalid credentials. Use demo account: admin / admin123');
+      setLoginError('Invalid username or password. Please verify your credentials.');
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    setLoginPassword('');
+    setLoginError('');
+    setCurrentPage('dashboard');
     showToast('Signed out of SustainRank dashboard.');
   };
 
@@ -655,18 +661,26 @@ export default function App() {
           <div className="flex-1 flex w-full">
             {/* If not authenticated, render Login Page */}
             {!isAuthenticated ? (
-              <div className="flex-1 flex items-center justify-center p-6 bg-slate-900">
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 border border-slate-200">
+              <div className="flex-1 flex items-center justify-center p-6 bg-slate-900 overflow-y-auto">
+                <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 border border-slate-200 animate-scale-up my-auto">
+                  {/* Academic Report Figure 5.1 Label */}
+                  <div className="text-center mb-3">
+                    <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full shadow-sm">
+                      Figure 5.1 – Login Interface
+                    </span>
+                  </div>
+
                   <div className="text-center mb-6">
-                    <div className="inline-flex p-3 bg-emerald-600 text-white rounded-xl shadow-lg mb-3">
+                    <div className="inline-flex p-3 bg-emerald-600 text-white rounded-2xl shadow-lg mb-3">
                       <ShieldCheck className="w-8 h-8" />
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-900">Sustain<span className="text-emerald-600">Rank</span></h2>
-                    <p className="text-xs text-slate-500 mt-1">Startup Sustainability Assessment Platform</p>
+                    <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Sustain<span className="text-emerald-600">Rank</span></h2>
+                    <p className="text-xs text-slate-500 mt-1 font-medium">Startup Sustainability Assessment Platform</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">B.Tech IT PBL &bull; Team: Harshini V &amp; Nadhiya A</p>
                   </div>
 
                   {loginError && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center gap-2">
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
                       <span>{loginError}</span>
                     </div>
@@ -675,38 +689,55 @@ export default function App() {
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">Username</label>
-                      <input
-                        type="text"
-                        value={loginUsername}
-                        onChange={e => setLoginUsername(e.target.value)}
-                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                        required
-                      />
+                      <div className="relative">
+                        <User className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                        <input
+                          type="text"
+                          value={loginUsername}
+                          onChange={e => setLoginUsername(e.target.value)}
+                          placeholder="admin"
+                          className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-none transition"
+                          required
+                        />
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-                      <input
-                        type="password"
-                        value={loginPassword}
-                        onChange={e => setLoginPassword(e.target.value)}
-                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                        required
-                      />
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-semibold text-slate-700">Password</label>
+                        <button
+                          type="button"
+                          onClick={() => { setLoginUsername('admin'); setLoginPassword('admin123'); setLoginError(''); }}
+                          className="text-[11px] text-emerald-600 hover:text-emerald-800 font-semibold"
+                        >
+                          Auto-fill Demo Credentials
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                        <input
+                          type="password"
+                          value={loginPassword}
+                          onChange={e => setLoginPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-none transition"
+                          required
+                        />
+                      </div>
                     </div>
                     <button
                       type="submit"
-                      className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg shadow-md transition"
+                      className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-1.5"
                     >
-                      Sign In to Dashboard
+                      Sign In to Dashboard &rarr;
                     </button>
                   </form>
 
                   <div className="mt-6 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">
                     <div className="flex items-center justify-between font-semibold text-slate-700 mb-1">
                       <span>Default Demo Account:</span>
-                      <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Spring Security 6</span>
+                      <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-medium">Spring Security 6</span>
                     </div>
-                    <div className="flex justify-between mt-1">
+                    <div className="flex justify-between mt-1 text-[11px]">
                       <span>Username: <strong className="text-emerald-700 font-mono">admin</strong></span>
                       <span>Password: <strong className="text-emerald-700 font-mono">admin123</strong></span>
                     </div>
@@ -797,9 +828,9 @@ export default function App() {
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                     <div className="flex items-center gap-2 text-xs">
                       <span className="font-bold text-slate-800 text-sm">
-                        {currentPage === 'dashboard' && 'Executive Sustainability Dashboard'}
+                        {currentPage === 'dashboard' && 'Executive Sustainability Dashboard (Figure 5.2 – Main Dashboard)'}
                         {currentPage === 'startups' && 'Startups Management & Registry'}
-                        {currentPage === 'rankings' && 'Leaderboard & Multi-Criteria Rankings'}
+                        {currentPage === 'rankings' && 'Leaderboard & Multi-Criteria Rankings (Figure 5.5 – Startup Ranking Output)'}
                         {currentPage === 'analytics' && 'Portfolio Analytics & Benchmarks'}
                       </span>
                     </div>
@@ -830,6 +861,13 @@ export default function App() {
                         className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-sm flex items-center gap-1.5 transition"
                       >
                         <Plus className="w-3.5 h-3.5" /> Add Startup
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="px-3 py-1.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 font-medium rounded-lg border border-slate-300 flex items-center gap-1.5 transition"
+                        title="Sign Out to Login Screen"
+                      >
+                        <LogOut className="w-3.5 h-3.5" /> Logout
                       </button>
                     </div>
                   </div>
@@ -1517,7 +1555,7 @@ export default function App() {
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-scale-up">
             <div className="bg-slate-900 text-white p-4 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-base text-white">Sustainability Assessment Engine</h3>
+                <h3 className="font-bold text-base text-white">Sustainability Assessment Engine (Figure 5.4 – Startup Assessment)</h3>
                 <p className="text-xs text-slate-400">
                   Evaluating <strong>{assessmentTarget.name}</strong> ({getCategoryName(assessmentTarget.category)})
                 </p>
@@ -1703,7 +1741,7 @@ export default function App() {
             <div className="bg-slate-900 text-white p-4 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-base text-white">
-                  {editingStartup ? 'Edit Startup Details' : 'Register New Startup'}
+                  {editingStartup ? 'Edit Startup Details' : 'Register New Startup (Figure 5.3 – Add Startup Interface)'}
                 </h3>
                 <p className="text-xs text-slate-400">
                   Stores organizational parameters and polymorphic category attributes
