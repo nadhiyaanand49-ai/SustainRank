@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Startups Directory')}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/layout :: #wrapper}">
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold mb-1 text-dark">Startups Registry &amp; Directory</h3>
+                <p class="text-muted small mb-0">Browse, filter, and manage all ventures registered on SustainRank.</p>
+            </div>
+            <div>
+                <a th:href="@{/startups/new}" class="btn btn-emerald btn-sm d-flex align-items-center gap-2">
+                    <i class="bi bi-plus-circle"></i> Register New Startup
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="card border-0 bg-white p-3 mb-4">
+            <form th:action="@{/startups}" method="get" class="row g-2 align-items-center">
+                <div class="col-12 col-md-5">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" name="query" class="form-control bg-light border-start-0"
+                               placeholder="Search by startup name..." th:value="${searchQuery}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <select name="category" class="form-select form-select-sm bg-light">
+                        <option value="">All Industry Categories</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat}"
+                                th:text="${cat.displayName}"
+                                th:selected="${selectedCategory == cat}">Category</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-dark btn-sm flex-grow-1">
+                        <i class="bi bi-funnel"></i> Apply Filter
+                    </button>
+                    <a th:href="@{/startups}" class="btn btn-outline-secondary btn-sm" title="Clear Filters">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Startups Table -->
+        <div class="card border-0 bg-white p-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small text-uppercase text-muted">
+                        <tr>
+                            <th># ID</th>
+                            <th>Startup Name</th>
+                            <th>Category</th>
+                            <th>Founder &amp; HQ</th>
+                            <th>Criteria Breakdown (E | I | S | F)</th>
+                            <th>Overall Score</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="startup : ${startups}">
+                            <td class="text-muted small fw-bold" th:text="'#' + ${startup.id}">#1</td>
+                            <td>
+                                <div class="fw-bold text-dark">
+                                    <a th:href="@{'/startups/' + ${startup.id}}" class="text-decoration-none text-dark" th:text="${startup.name}">Name</a>
+                                </div>
+                                <small class="text-muted" th:text="'Founded ' + ${startup.yearEstablished} + ' • ' + ${startup.contactEmail}">Est. 2022</small>
+                            </td>
+                            <td>
+                                <span th:class="'badge ' +
+                                      (${startup.category.name() == 'TechStartup'} ? 'badge-tech' :
+                                      (${startup.category.name() == 'GreenStartup'} ? 'badge-green' :
+                                      (${startup.category.name() == 'HealthStartup'} ? 'badge-health' : 'badge-social')))"
+                                      th:text="${startup.category.displayName}">Category</span>
+                            </td>
+                            <td>
+                                <div class="small fw-medium text-dark" th:text="${startup.founderName}">Founder</div>
+                                <small class="text-muted" th:text="${startup.location}">Location</small>
+                            </td>
+                            <td>
+                                <div th:if="${startup.isAssessed}" class="d-flex align-items-center gap-1 small">
+                                    <span class="badge bg-success-subtle text-success" title="Environmental Score" th:text="'E: ' + ${startup.environmentalScore}">E: 80</span>
+                                    <span class="badge bg-primary-subtle text-primary" title="Innovation Score" th:text="'I: ' + ${startup.innovationScore}">I: 80</span>
+                                    <span class="badge bg-warning-subtle text-warning-emphasis" title="Social Impact Score" th:text="'S: ' + ${startup.socialImpactScore}">S: 80</span>
+                                    <span class="badge bg-info-subtle text-info-emphasis" title="Financial Viability Score" th:text="'F: ' + ${startup.financialViabilityScore}">F: 80</span>
+                                </div>
+                                <div th:unless="${startup.isAssessed}" class="text-muted small">
+                                    <span class="badge bg-light text-muted border">Scores Pending</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div th:if="${startup.isAssessed}">
+                                    <span class="fw-bold fs-6 text-emerald" th:text="${startup.overallScore} + ' / 100'">85.0 / 100</span>
+                                </div>
+                                <div th:unless="${startup.isAssessed}" class="text-muted small">
+                                    <em>N/A</em>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:if="${startup.isAssessed}" class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-check2"></i> Assessed
+                                </span>
+                                <span th:unless="${startup.isAssessed}" class="badge bg-secondary-subtle text-secondary border">
+                                    <i class="bi bi-hourglass-split"></i> Pending
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{'/startups/' + ${startup.id}}" class="btn btn-outline-secondary" title="View Profile">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{'/assess/' + ${startup.id}}" class="btn btn-outline-success" title="Sustainability Assessment">
+                                        <i class="bi bi-sliders"></i>
+                                    </a>
+                                    <a th:href="@{'/startups/' + ${startup.id} + '/edit'}" class="btn btn-outline-primary" title="Edit Startup Details">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger" title="Delete Startup"
+                                            th:onclick="'confirmDelete(' + ${startup.id} + ', \'' + ${startup.name} + '\')'">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(startups)}">
+                            <td colspan="8" class="text-center py-5">
+                                <div class="text-muted mb-2"><i class="bi bi-search fs-1"></i></div>
+                                <h5 class="fw-bold text-dark">No Startups Found</h5>
+                                <p class="text-muted small">No venture matched your filter or search query. Try adjusting terms.</p>
+                                <a th:href="@{/startups}" class="btn btn-sm btn-outline-secondary">Reset Filters</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Hidden delete form for modal or javascript confirmation -->
+        <form id="deleteForm" method="post" style="display: none;">
+        </form>
+
+        <script>
+            function confirmDelete(id, name) {
+                if (confirm('Are you sure you want to delete startup "' + name + '"? This operation cannot be undone.')) {
+                    var form = document.getElementById('deleteForm');
+                    form.action = '/startups/' + id + '/delete';
+                    form.submit();
+                }
+            }
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

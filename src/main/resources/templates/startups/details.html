@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${startup.name} + ' Dossier')}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/layout :: #wrapper}">
+    <div th:fragment="content">
+        <!-- Breadcrumb -->
+        <div class="mb-3">
+            <a th:href="@{/startups}" class="text-decoration-none small text-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back to Startups Directory
+            </a>
+        </div>
+
+        <!-- Header Card -->
+        <div class="card border-0 bg-white p-4 mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span th:class="'badge ' +
+                              (${startup.category.name() == 'TechStartup'} ? 'badge-tech' :
+                              (${startup.category.name() == 'GreenStartup'} ? 'badge-green' :
+                              (${startup.category.name() == 'HealthStartup'} ? 'badge-health' : 'badge-social')))"
+                              th:text="${startup.category.displayName}">Category</span>
+
+                        <span th:if="${startup.isAssessed}" class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class="bi bi-check-circle-fill me-1"></i> Formally Assessed
+                        </span>
+                        <span th:unless="${startup.isAssessed}" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                            <i class="bi bi-clock me-1"></i> Assessment Pending
+                        </span>
+
+                        <span th:if="${startup.isDemo}" class="badge bg-secondary-subtle text-secondary border" title="Fictional Demo Record">
+                            Sample Data
+                        </span>
+                    </div>
+
+                    <h2 class="fw-bold text-dark mb-1" th:text="${startup.name}">Startup Name</h2>
+                    <p class="text-muted mb-0">
+                        Founded by <strong class="text-dark" th:text="${startup.founderName}">Founder</strong> in
+                        <span th:text="${startup.yearEstablished}">2022</span> &bull;
+                        <span th:text="${startup.location}">Bengaluru, India</span>
+                    </p>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="d-flex align-items-center gap-2">
+                    <a th:href="@{'/assess/' + ${startup.id}}" class="btn btn-emerald btn-sm">
+                        <i class="bi bi-sliders me-1"></i> <span th:text="${startup.isAssessed} ? 'Re-Evaluate Scores' : 'Perform Assessment'">Evaluate</span>
+                    </a>
+                    <a th:href="@{'/startups/' + ${startup.id} + '/edit'}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil me-1"></i> Edit Details
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Column: Sustainability Score Breakdown -->
+            <div class="col-12 col-lg-7">
+                <div class="card border-0 bg-white p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark mb-0">Sustainability Scorecard</h5>
+                        <div th:if="${startup.isAssessed && startup.rank != null}">
+                            <span class="badge bg-dark fs-6 px-3 py-2">
+                                <i class="bi bi-trophy text-warning me-1"></i> Rank #<span th:text="${startup.rank}">1</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Overall Score Large Banner -->
+                    <div th:if="${startup.isAssessed}" class="p-4 rounded-3 bg-light border text-center mb-4">
+                        <small class="text-uppercase fw-semibold text-muted" style="letter-spacing: 0.05em;">Composite Sustainability Score</small>
+                        <div class="d-flex align-items-baseline justify-content-center gap-2 my-1">
+                            <h1 class="display-4 fw-bold text-emerald mb-0" th:text="${startup.overallScore}">88.5</h1>
+                            <span class="fs-4 text-muted">/ 100</span>
+                        </div>
+                        <p class="small text-muted mb-0">
+                            Calculated dynamically as: <code>(Env + Innov + Social + Fin) / 4</code> (Equal 25% weights)
+                        </p>
+                    </div>
+
+                    <div th:unless="${startup.isAssessed}" class="alert alert-warning p-4 rounded-3 text-center mb-4">
+                        <i class="bi bi-hourglass-top fs-2 text-warning mb-2 d-block"></i>
+                        <h5 class="fw-bold">No Sustainability Assessment Recorded</h5>
+                        <p class="small mb-3">This startup has not been formally evaluated across the four ESG pillars yet.</p>
+                        <a th:href="@{'/assess/' + ${startup.id}}" class="btn btn-warning btn-sm fw-semibold">
+                            <i class="bi bi-plus-circle me-1"></i> Record First Assessment
+                        </a>
+                    </div>
+
+                    <!-- 4 Criteria Detailed Bars -->
+                    <div th:if="${startup.isAssessed}" class="space-y-4">
+                        <!-- Pillar 1: Environmental -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small fw-semibold mb-1">
+                                <span><i class="bi bi-tree text-success me-1"></i> Environmental Sustainability (25%)</span>
+                                <span class="text-success fw-bold" th:text="${startup.environmentalScore} + ' / 100'">85 / 100</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                     th:style="'width: ' + ${startup.environmentalScore} + '%;'"></div>
+                            </div>
+                        </div>
+
+                        <!-- Pillar 2: Innovation -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small fw-semibold mb-1">
+                                <span><i class="bi bi-lightbulb text-primary me-1"></i> Innovation (25%)</span>
+                                <span class="text-primary fw-bold" th:text="${startup.innovationScore} + ' / 100'">90 / 100</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-primary" role="progressbar"
+                                     th:style="'width: ' + ${startup.innovationScore} + '%;'"></div>
+                            </div>
+                        </div>
+
+                        <!-- Pillar 3: Social Impact -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small fw-semibold mb-1">
+                                <span><i class="bi bi-people text-warning me-1"></i> Social Impact (25%)</span>
+                                <span class="text-warning-emphasis fw-bold" th:text="${startup.socialImpactScore} + ' / 100'">80 / 100</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-warning" role="progressbar"
+                                     th:style="'width: ' + ${startup.socialImpactScore} + '%;'"></div>
+                            </div>
+                        </div>
+
+                        <!-- Pillar 4: Financial Viability -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between small fw-semibold mb-1">
+                                <span><i class="bi bi-graph-up text-info me-1"></i> Financial Viability (25%)</span>
+                                <span class="text-info fw-bold" th:text="${startup.financialViabilityScore} + ' / 100'">75 / 100</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-info" role="progressbar"
+                                     th:style="'width: ' + ${startup.financialViabilityScore} + '%;'"></div>
+                            </div>
+                        </div>
+
+                        <!-- Radar Chart -->
+                        <div style="height: 250px;">
+                            <canvas id="detailsRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Evaluator Notes -->
+                    <div th:if="${startup.assessmentNotes != null && !#strings.isEmpty(startup.assessmentNotes)}" class="mt-4 pt-3 border-top">
+                        <h6 class="fw-bold text-dark mb-2">Evaluator Assessment Notes</h6>
+                        <div class="p-3 bg-light rounded-3 small text-muted fst-italic" th:text="${startup.assessmentNotes}">
+                            Notes description.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Venture Profile & Metadata -->
+            <div class="col-12 col-lg-5">
+                <!-- Overview Card -->
+                <div class="card border-0 bg-white p-4 mb-4">
+                    <h5 class="fw-bold text-dark mb-3">Venture Dossier</h5>
+                    <p class="text-secondary small" th:text="${startup.description}">Detailed startup description.</p>
+
+                    <dl class="row small mb-0 mt-3 border-top pt-3">
+                        <dt class="col-sm-5 text-muted">Category:</dt>
+                        <dd class="col-sm-7 fw-semibold" th:text="${startup.category.displayName}">Category</dd>
+
+                        <dt class="col-sm-5 text-muted">Founder:</dt>
+                        <dd class="col-sm-7" th:text="${startup.founderName}">Founder</dd>
+
+                        <dt class="col-sm-5 text-muted">Headquarters:</dt>
+                        <dd class="col-sm-7" th:text="${startup.location}">Location</dd>
+
+                        <dt class="col-sm-5 text-muted">Year Founded:</dt>
+                        <dd class="col-sm-7" th:text="${startup.yearEstablished}">2022</dd>
+
+                        <dt class="col-sm-5 text-muted">Contact Email:</dt>
+                        <dd class="col-sm-7">
+                            <a th:href="'mailto:' + ${startup.contactEmail}" class="text-decoration-none" th:text="${startup.contactEmail}">email</a>
+                        </dd>
+
+                        <dt class="col-sm-5 text-muted">Domain Specialization:</dt>
+                        <dd class="col-sm-7 text-emerald fw-medium" th:text="${startup.categorySpecialization}">Specialization</dd>
+
+                        <dt class="col-sm-5 text-muted">Registered On:</dt>
+                        <dd class="col-sm-7 text-muted" th:text="${#temporals.format(startup.createdAt, 'dd MMM yyyy, HH:mm')}">Date</dd>
+                    </dl>
+                </div>
+
+                <!-- Academic Rubric Information Card -->
+                <div class="card border-0 bg-white p-4">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-primary">
+                        <i class="bi bi-journal-code fs-5"></i>
+                        <h6 class="fw-bold mb-0">Assessment Methodology</h6>
+                    </div>
+                    <p class="small text-muted mb-2">
+                        SustainRank evaluates early-stage ventures against an objective ESG matrix:
+                    </p>
+                    <ul class="small text-muted ps-3 mb-0">
+                        <li><strong>Environmental (25%):</strong> Renewable energy, carbon reduction, and circular manufacturing.</li>
+                        <li><strong>Innovation (25%):</strong> Intellectual property, patent pipeline, and technical moat.</li>
+                        <li><strong>Social Impact (25%):</strong> Beneficiaries reached and UN SDG alignment.</li>
+                        <li><strong>Financial Viability (25%):</strong> Capital efficiency, runway, and unit economics.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script th:if="${startup.isAssessed}" th:inline="javascript">
+            /*<![CDATA[*/
+            document.addEventListener('DOMContentLoaded', function() {
+                var radarCtx = document.getElementById('detailsRadarChart').getContext('2d');
+                new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Environmental', 'Innovation', 'Social Impact', 'Financial Viability'],
+                        datasets: [{
+                            label: /*[[${startup.name}]]*/ 'Startup',
+                            data: [
+                                /*[[${startup.environmentalScore}]]*/ 0,
+                                /*[[${startup.innovationScore}]]*/ 0,
+                                /*[[${startup.socialImpactScore}]]*/ 0,
+                                /*[[${startup.financialViabilityScore}]]*/ 0
+                            ],
+                            backgroundColor: 'rgba(5, 150, 105, 0.2)',
+                            borderColor: '#059669',
+                            pointBackgroundColor: '#059669',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#059669'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: { display: true },
+                                suggestedMin: 0,
+                                suggestedMax: 100
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            });
+            /*]]>*/
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

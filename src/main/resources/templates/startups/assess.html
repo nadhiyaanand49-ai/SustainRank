@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Assess ' + ${startup.name})}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/layout :: #wrapper}">
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="mb-4">
+            <a th:href="@{'/startups/' + ${startup.id}}" class="text-decoration-none small text-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back to Startup Profile
+            </a>
+            <h3 class="fw-bold mt-2 mb-1 text-dark">Sustainability Assessment Form</h3>
+            <p class="text-muted small mb-0">
+                Evaluating <strong class="text-dark" th:text="${startup.name}">Startup Name</strong> (<span th:text="${startup.category.displayName}">Category</span>)
+            </p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <div class="card border-0 bg-white p-4 p-md-5 mb-4">
+                    <!-- Academic Calculation Explanation Banner -->
+                    <div class="alert alert-info border-0 bg-info-subtle text-dark p-3 rounded-3 mb-4">
+                        <div class="d-flex gap-2">
+                            <i class="bi bi-calculator fs-4 text-info"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Standard Equal-Weighting Formula (25% Each)</h6>
+                                <p class="small mb-1">
+                                    Overall Sustainability Score is determined as:
+                                </p>
+                                <code class="fw-bold text-dark bg-white px-2 py-1 rounded border d-inline-block">
+                                    Overall Score = (Environmental + Innovation + Social Impact + Financial Viability) / 4
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/assess/save}" th:object="${assessmentForm}" method="post">
+                        <input type="hidden" th:field="*{startupId}">
+
+                        <!-- Criterion 1: Environmental Sustainability (25%) -->
+                        <div class="p-3 mb-3 rounded-3 border bg-light">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <label class="form-label fw-bold text-success mb-0">
+                                        <i class="bi bi-tree me-1"></i> A. Environmental Sustainability
+                                    </label>
+                                    <div class="text-muted" style="font-size: 0.78rem;">
+                                        Carbon reduction, renewable energy adoption, circularity &amp; waste minimization.
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">25% Weight</span>
+                                    <input type="number" step="0.1" min="0" max="100" class="form-control form-control-sm text-end fw-bold"
+                                           style="width: 75px;" id="envScoreInput" th:field="*{environmentalScore}" oninput="syncScores('env', 'input')">
+                                </div>
+                            </div>
+                            <input type="range" class="form-range" min="0" max="100" step="0.5" id="envScoreSlider"
+                                   th:value="*{environmentalScore}" oninput="syncScores('env', 'slider')">
+                        </div>
+
+                        <!-- Criterion 2: Innovation (25%) -->
+                        <div class="p-3 mb-3 rounded-3 border bg-light">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <label class="form-label fw-bold text-primary mb-0">
+                                        <i class="bi bi-lightbulb me-1"></i> B. Innovation &amp; Technology Moat
+                                    </label>
+                                    <div class="text-muted" style="font-size: 0.78rem;">
+                                        R&amp;D originality, intellectual property/patents, technical scalability &amp; disruption.
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">25% Weight</span>
+                                    <input type="number" step="0.1" min="0" max="100" class="form-control form-control-sm text-end fw-bold"
+                                           style="width: 75px;" id="innovScoreInput" th:field="*{innovationScore}" oninput="syncScores('innov', 'input')">
+                                </div>
+                            </div>
+                            <input type="range" class="form-range" min="0" max="100" step="0.5" id="innovScoreSlider"
+                                   th:value="*{innovationScore}" oninput="syncScores('innov', 'slider')">
+                        </div>
+
+                        <!-- Criterion 3: Social Impact (25%) -->
+                        <div class="p-3 mb-3 rounded-3 border bg-light">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <label class="form-label fw-bold text-warning-emphasis mb-0">
+                                        <i class="bi bi-people me-1"></i> C. Social Impact &amp; Inclusion
+                                    </label>
+                                    <div class="text-muted" style="font-size: 0.78rem;">
+                                        Community uplift, UN SDG alignment, diversity, fair wages &amp; ethical governance.
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">25% Weight</span>
+                                    <input type="number" step="0.1" min="0" max="100" class="form-control form-control-sm text-end fw-bold"
+                                           style="width: 75px;" id="socScoreInput" th:field="*{socialImpactScore}" oninput="syncScores('soc', 'input')">
+                                </div>
+                            </div>
+                            <input type="range" class="form-range" min="0" max="100" step="0.5" id="socScoreSlider"
+                                   th:value="*{socialImpactScore}" oninput="syncScores('soc', 'slider')">
+                        </div>
+
+                        <!-- Criterion 4: Financial Viability (25%) -->
+                        <div class="p-3 mb-4 rounded-3 border bg-light">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <label class="form-label fw-bold text-info-emphasis mb-0">
+                                        <i class="bi bi-graph-up me-1"></i> D. Financial Viability &amp; Traction
+                                    </label>
+                                    <div class="text-muted" style="font-size: 0.78rem;">
+                                        Unit economics, runway stability, customer retention &amp; long-term commercial sustainability.
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">25% Weight</span>
+                                    <input type="number" step="0.1" min="0" max="100" class="form-control form-control-sm text-end fw-bold"
+                                           style="width: 75px;" id="finScoreInput" th:field="*{financialViabilityScore}" oninput="syncScores('fin', 'input')">
+                                </div>
+                            </div>
+                            <input type="range" class="form-range" min="0" max="100" step="0.5" id="finScoreSlider"
+                                   th:value="*{financialViabilityScore}" oninput="syncScores('fin', 'slider')">
+                        </div>
+
+                        <!-- Live Calculated Composite Preview Box -->
+                        <div class="p-4 rounded-3 bg-emerald-subtle border border-emerald-subtle text-center mb-4">
+                            <small class="text-uppercase fw-bold text-emerald-emphasis">Live Score Computation Preview</small>
+                            <div class="d-flex justify-content-center align-items-baseline gap-2 my-1">
+                                <h1 class="display-4 fw-bold text-emerald mb-0" id="liveOverallScore">50.00</h1>
+                                <span class="fs-4 text-emerald-emphasis">/ 100</span>
+                            </div>
+                            <div id="tierBadge" class="badge bg-emerald text-white px-3 py-1">Tier 3 (Emerging Sustainability)</div>
+                        </div>
+
+                        <!-- Evaluator Notes Textarea -->
+                        <div class="mb-4">
+                            <label for="assessmentNotes" class="form-label small fw-semibold text-dark">
+                                Qualitative Evaluator Observations &amp; Evidence
+                            </label>
+                            <textarea class="form-control" id="assessmentNotes" th:field="*{assessmentNotes}" rows="3"
+                                      placeholder="Cite evidence, audit reports, patents, ISO/B-Corp certifications, or field trial results..."></textarea>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a th:href="@{'/startups/' + ${startup.id}}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-emerald px-4">
+                                <i class="bi bi-check-circle me-1"></i> Save Assessment &amp; Update Rankings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time calculation and slider synchronization script -->
+        <script>
+            function syncScores(prefix, source) {
+                var input = document.getElementById(prefix + 'ScoreInput');
+                var slider = document.getElementById(prefix + 'ScoreSlider');
+
+                if (source === 'input') {
+                    slider.value = input.value;
+                } else {
+                    input.value = slider.value;
+                }
+                updateLiveScore();
+            }
+
+            function updateLiveScore() {
+                var env = parseFloat(document.getElementById('envScoreInput').value) || 0;
+                var innov = parseFloat(document.getElementById('innovScoreInput').value) || 0;
+                var soc = parseFloat(document.getElementById('socScoreInput').value) || 0;
+                var fin = parseFloat(document.getElementById('finScoreInput').value) || 0;
+
+                var overall = (env * 0.25) + (innov * 0.25) + (soc * 0.25) + (fin * 0.25);
+                overall = Math.round(overall * 100) / 100;
+
+                document.getElementById('liveOverallScore').innerText = overall.toFixed(2);
+
+                var badge = document.getElementById('tierBadge');
+                if (overall >= 85) {
+                    badge.className = 'badge bg-success text-white px-3 py-1';
+                    badge.innerText = 'Tier 1: ESG Leader / Exceptional';
+                } else if (overall >= 70) {
+                    badge.className = 'badge bg-primary text-white px-3 py-1';
+                    badge.innerText = 'Tier 2: Strong Sustainability';
+                } else if (overall >= 50) {
+                    badge.className = 'badge bg-warning text-dark px-3 py-1';
+                    badge.innerText = 'Tier 3: Moderate / Developing';
+                } else {
+                    badge.className = 'badge bg-danger text-white px-3 py-1';
+                    badge.innerText = 'Tier 4: High ESG Risk / Critical Improvements Needed';
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', updateLiveScore);
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

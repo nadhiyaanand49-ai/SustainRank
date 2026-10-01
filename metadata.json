@@ -1,0 +1,6 @@
+{
+  "name": "SustainRank - Startup Sustainability Assessment and Ranking Platform",
+  "description": "Enterprise Java Spring Boot PBL platform for assessing startup sustainability across environmental, innovation, social impact, and financial viability dimensions with automated ranking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

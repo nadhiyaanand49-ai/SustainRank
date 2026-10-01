@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Portfolio Analytics')}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/layout :: #wrapper}">
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold mb-1 text-dark">Portfolio Sustainability Analytics</h3>
+                <p class="text-muted small mb-0">Cross-domain comparative analysis, ESG pillar benchmarks, and portfolio reporting.</p>
+            </div>
+            <div>
+                <a th:href="@{/export/csv}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-download me-1"></i> Export Full Dataset CSV
+                </a>
+            </div>
+        </div>
+
+        <!-- 4 Criteria Macro KPI Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3">
+                <div class="card border-0 bg-white p-3">
+                    <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.72rem;">Avg. Environmental</small>
+                    <h3 class="fw-bold text-success mb-1" th:text="${stats.averageEnvironmental} + ' / 100'">0.0 / 100</h3>
+                    <small class="text-muted">Weight: 25%</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card border-0 bg-white p-3">
+                    <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.72rem;">Avg. Innovation</small>
+                    <h3 class="fw-bold text-primary mb-1" th:text="${stats.averageInnovation} + ' / 100'">0.0 / 100</h3>
+                    <small class="text-muted">Weight: 25%</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card border-0 bg-white p-3">
+                    <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.72rem;">Avg. Social Impact</small>
+                    <h3 class="fw-bold text-warning-emphasis mb-1" th:text="${stats.averageSocial} + ' / 100'">0.0 / 100</h3>
+                    <small class="text-muted">Weight: 25%</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card border-0 bg-white p-3">
+                    <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.72rem;">Avg. Financial Viability</small>
+                    <h3 class="fw-bold text-info mb-1" th:text="${stats.averageFinancial} + ' / 100'">0.0 / 100</h3>
+                    <small class="text-muted">Weight: 25%</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 bg-white p-4 h-100">
+                    <h5 class="fw-bold text-dark mb-1">Portfolio ESG Radar Analysis</h5>
+                    <small class="text-muted mb-3 d-block">Holistic benchmark of all four sustainability dimensions</small>
+                    <div style="height: 300px;">
+                        <canvas id="portfolioRadarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 bg-white p-4 h-100">
+                    <h5 class="fw-bold text-dark mb-1">Top-5 Ranked Ventures Comparison</h5>
+                    <small class="text-muted mb-3 d-block">Comparison of overall sustainability scores among leaders</small>
+                    <div style="height: 300px;">
+                        <canvas id="top5ComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            document.addEventListener('DOMContentLoaded', function() {
+                // Portfolio Radar Chart
+                var radarCtx = document.getElementById('portfolioRadarChart').getContext('2d');
+                new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Environmental (25%)', 'Innovation (25%)', 'Social Impact (25%)', 'Financial Viability (25%)'],
+                        datasets: [{
+                            label: 'Portfolio Average',
+                            data: [
+                                /*[(${stats.averageEnvironmental})]*/ 0,
+                                /*[(${stats.averageInnovation})]*/ 0,
+                                /*[(${stats.averageSocial})]*/ 0,
+                                /*[(${stats.averageFinancial})]*/ 0
+                            ],
+                            backgroundColor: 'rgba(5, 150, 105, 0.25)',
+                            borderColor: '#059669',
+                            pointBackgroundColor: '#059669'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                suggestedMin: 0,
+                                suggestedMax: 100
+                            }
+                        }
+                    }
+                });
+
+                // Top 5 Ventures Chart
+                var top5Names = [];
+                var top5Scores = [];
+                /*[# th:each="s, stat : ${rankedStartups}" th:if="${s.isAssessed && stat.index < 5}"]*/
+                top5Names.push(/*[[${s.name}]]*/ '');
+                top5Scores.push(/*[[${s.overallScore}]]*/ 0);
+                /*[/]*/
+
+                var top5Ctx = document.getElementById('top5ComparisonChart').getContext('2d');
+                new Chart(top5Ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: top5Names,
+                        datasets: [{
+                            label: 'Overall Score (/100)',
+                            data: top5Scores,
+                            backgroundColor: '#0f172a',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+            });
+            /*]]>*/
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

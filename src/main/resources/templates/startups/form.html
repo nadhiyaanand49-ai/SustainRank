@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${isEdit} ? 'Edit Startup' : 'Register Startup')}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/layout :: #wrapper}">
+    <div th:fragment="content">
+        <!-- Breadcrumb / Header -->
+        <div class="mb-4">
+            <a th:href="@{/startups}" class="text-decoration-none small text-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back to Startups Directory
+            </a>
+            <h3 class="fw-bold mt-2 mb-1 text-dark" th:text="${isEdit} ? 'Edit Startup Details' : 'Register New Startup'">Register Startup</h3>
+            <p class="text-muted small mb-0">Record organizational parameters and industry attributes for sustainability evaluation.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-9">
+                <div class="card border-0 bg-white p-4 p-md-5">
+                    <form th:action="@{/startups/save}" th:object="${startupForm}" method="post">
+                        <input type="hidden" th:field="*{id}">
+
+                        <!-- General Information Section -->
+                        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">General Information</h5>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-md-7">
+                                <label for="name" class="form-label small fw-semibold text-dark">Startup Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" th:field="*{name}"
+                                       placeholder="e.g. EcoLoop Packaging" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{name}">Name is required</div>
+                            </div>
+
+                            <div class="col-12 col-md-5">
+                                <label for="category" class="form-label small fw-semibold text-dark">Category Domain <span class="text-danger">*</span></label>
+                                <select class="form-select" id="category" th:field="*{category}" th:errorclass="is-invalid" onchange="toggleCategoryFields()">
+                                    <option value="">-- Select Category --</option>
+                                    <option th:each="cat : ${categories}"
+                                            th:value="${cat}"
+                                            th:text="${cat.displayName}">Tech Startup</option>
+                                </select>
+                                <div class="invalid-feedback" th:errors="*{category}">Please select a category</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label small fw-semibold text-dark">Venture Description &amp; Mission <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="description" th:field="*{description}" rows="3"
+                                      placeholder="Brief overview of the startup, its products/services, and value proposition..."
+                                      th:errorclass="is-invalid"></textarea>
+                            <div class="invalid-feedback" th:errors="*{description}">Description is required</div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-4">
+                                <label for="founderName" class="form-label small fw-semibold text-dark">Founder / Key Leader <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="founderName" th:field="*{founderName}"
+                                       placeholder="e.g. Dr. Ananya Sharma" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{founderName}">Founder name is required</div>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="location" class="form-label small fw-semibold text-dark">HQ Location <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="location" th:field="*{location}"
+                                       placeholder="e.g. Bengaluru, Karnataka" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{location}">Location is required</div>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="yearEstablished" class="form-label small fw-semibold text-dark">Year Established <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="yearEstablished" th:field="*{yearEstablished}"
+                                       placeholder="2023" min="1900" max="2030" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{yearEstablished}">Valid year is required</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="contactEmail" class="form-label small fw-semibold text-dark">Official Contact Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="contactEmail" th:field="*{contactEmail}"
+                                   placeholder="contact@startup.com" th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:errors="*{contactEmail}">Valid email address is required</div>
+                        </div>
+
+                        <!-- Specialized Category Attributes (OOP Polymorphic Fields) -->
+                        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Domain Specialization (OOP Polymorphism)</h5>
+                        <p class="text-muted small">Specialized fields are stored via JPA inheritance in the subclass models.</p>
+
+                        <!-- Tech Startup Specific -->
+                        <div id="techFields" class="category-block row g-3 mb-3 p-3 bg-light rounded-3 border">
+                            <div class="col-12"><strong class="text-primary small text-uppercase">Tech Startup Attributes</strong></div>
+                            <div class="col-12 col-md-8">
+                                <label class="form-label small fw-semibold">Primary Technology Stack</label>
+                                <input type="text" class="form-control form-control-sm" th:field="*{primaryTechStack}"
+                                       placeholder="e.g. Rust, PyTorch, Distributed Cloud">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small fw-semibold">Granted / Filed Patents</label>
+                                <input type="number" class="form-control form-control-sm" th:field="*{patentCount}" placeholder="0">
+                            </div>
+                        </div>
+
+                        <!-- Green Startup Specific -->
+                        <div id="greenFields" class="category-block row g-3 mb-3 p-3 bg-light rounded-3 border">
+                            <div class="col-12"><strong class="text-success small text-uppercase">Green Startup Attributes</strong></div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold">Annual Carbon Offset (Tons CO2e)</label>
+                                <input type="number" step="0.1" class="form-control form-control-sm" th:field="*{estimatedCarbonOffsetTons}" placeholder="e.g. 450.0">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold">Renewable Energy Utilization (%)</label>
+                                <input type="number" step="0.1" class="form-control form-control-sm" th:field="*{renewableEnergyPercentage}" placeholder="e.g. 85.5">
+                            </div>
+                        </div>
+
+                        <!-- Health Startup Specific -->
+                        <div id="healthFields" class="category-block row g-3 mb-3 p-3 bg-light rounded-3 border">
+                            <div class="col-12"><strong class="text-info small text-uppercase">Health Startup Attributes</strong></div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold">Clinical Development Phase</label>
+                                <input type="text" class="form-control form-control-sm" th:field="*{clinicalPhase}" placeholder="e.g. Phase II Trials">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold">Regulatory Compliance</label>
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input" th:field="*{hipaaOrGdprCompliant}" id="hipaaCheck">
+                                    <label class="form-check-label small" for="hipaaCheck">HIPAA / CDSCO Compliant</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Startup Specific -->
+                        <div id="socialFields" class="category-block row g-3 mb-4 p-3 bg-light rounded-3 border">
+                            <div class="col-12"><strong class="text-warning-emphasis small text-uppercase">Social Startup Attributes</strong></div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold">Beneficiaries Reached (Lives Impacted)</label>
+                                <input type="number" class="form-control form-control-sm" th:field="*{beneficiariesReached}" placeholder="e.g. 25000">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold">UN SDG Alignment</label>
+                                <input type="text" class="form-control form-control-sm" th:field="*{unSdgAlignment}" placeholder="e.g. SDG 3, SDG 6">
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a th:href="@{/startups}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-emerald px-4">
+                                <i class="bi bi-check-lg me-1"></i> <span th:text="${isEdit} ? 'Update Startup' : 'Save Startup'">Save Startup</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleCategoryFields() {
+                var category = document.getElementById('category').value;
+                document.querySelectorAll('.category-block').forEach(function(el) {
+                    el.style.display = 'none';
+                });
+
+                if (category === 'TechStartup') {
+                    document.getElementById('techFields').style.display = 'flex';
+                } else if (category === 'GreenStartup') {
+                    document.getElementById('greenFields').style.display = 'flex';
+                } else if (category === 'HealthStartup') {
+                    document.getElementById('healthFields').style.display = 'flex';
+                } else if (category === 'SocialStartup') {
+                    document.getElementById('socialFields').style.display = 'flex';
+                }
+            }
+            document.addEventListener('DOMContentLoaded', toggleCategoryFields);
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

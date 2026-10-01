@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Executive Dashboard')}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/layout :: #wrapper}">
+    <div th:fragment="content">
+        <!-- Dashboard Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold mb-1 text-dark">Executive Sustainability Dashboard</h3>
+                <p class="text-muted small mb-0">Overview of venture portfolio evaluations, ESG metrics, and sustainability performance.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <form th:action="@{/demo/reset}" method="post" class="d-inline" onsubmit="return confirm('Reset all demo records to initial dataset?');">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm" title="Restore Default Seed Data">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset Demo Data
+                    </button>
+                </form>
+                <form th:action="@{/demo/clear}" method="post" class="d-inline" onsubmit="return confirm('Purge all sample demonstration records?');">
+                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Purge Sample Records">
+                        <i class="bi bi-trash"></i> Clear Demo Data
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 4 KPI Summary Cards -->
+        <div class="row g-3 mb-4">
+            <!-- Metric 1: Total Startups -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card metric-card border-0 h-100 p-3 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-medium text-uppercase">Total Startups</span>
+                        <div class="metric-icon-box bg-primary-subtle text-primary">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h2 class="fw-bold mb-0 text-dark" th:text="${stats.totalStartups}">0</h2>
+                        <span class="badge bg-light text-muted border">Registered</span>
+                    </div>
+                    <div class="small text-muted mt-2 d-flex align-items-center justify-content-between">
+                        <span><strong th:text="${stats.assessedCount}">0</strong> Assessed</span>
+                        <span><strong th:text="${stats.pendingCount}">0</strong> Pending</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric 2: Active Categories -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card metric-card border-0 h-100 p-3 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-medium text-uppercase">Active Domains</span>
+                        <div class="metric-icon-box bg-info-subtle text-info">
+                            <i class="bi bi-grid"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h2 class="fw-bold mb-0 text-dark" th:text="${stats.totalCategories}">4</h2>
+                        <span class="badge bg-light text-muted border">of 4 Categories</span>
+                    </div>
+                    <div class="small text-muted mt-2">
+                        Tech, Green, Health &amp; Social
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric 3: Average Sustainability Score -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card metric-card border-0 h-100 p-3 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-medium text-uppercase">Average ESG Score</span>
+                        <div class="metric-icon-box bg-success-subtle text-success">
+                            <i class="bi bi-patch-check"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h2 class="fw-bold mb-0 text-emerald" th:text="${stats.averageSustainabilityScore} + ' / 100'">0.0 / 100</h2>
+                    </div>
+                    <div class="small text-muted mt-2">
+                        Equal 25% weight across 4 criteria
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric 4: Highest Ranked Startup -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card metric-card border-0 h-100 p-3 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-medium text-uppercase">Top Leader</span>
+                        <div class="metric-icon-box bg-warning-subtle text-warning">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                    </div>
+                    <div th:if="${stats.topRankedStartup != null}">
+                        <h5 class="fw-bold text-dark text-truncate mb-1" th:text="${stats.topRankedStartup.name}">EcoLoop</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle fw-semibold"
+                                  th:text="${stats.topRankedStartup.overallScore} + ' pts'">90 pts</span>
+                            <span class="small text-muted" th:text="${stats.topRankedStartup.category.displayName}">Category</span>
+                        </div>
+                    </div>
+                    <div th:unless="${stats.topRankedStartup != null}" class="text-muted small py-2">
+                        No assessed startups yet
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-3 mb-4">
+            <!-- Chart 1: Category Distribution -->
+            <div class="col-12 col-lg-5">
+                <div class="card border-0 p-4 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark mb-0">Domain Distribution</h5>
+                        <span class="badge bg-light text-muted border">By Category</span>
+                    </div>
+                    <div style="height: 260px; position: relative;">
+                        <canvas id="categoryDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 2: 4 Pillars Benchmark -->
+            <div class="col-12 col-lg-7">
+                <div class="card border-0 p-4 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">ESG Criteria Portfolio Averages</h5>
+                            <small class="text-muted">Breakdown across all assessed ventures (Equal 25% weights)</small>
+                        </div>
+                        <a th:href="@{/analytics}" class="btn btn-outline-secondary btn-sm">Full Analytics &rarr;</a>
+                    </div>
+                    <div style="height: 260px; position: relative;">
+                        <canvas id="criteriaBenchmarkChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Startups Table -->
+        <div class="card border-0 bg-white p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="fw-bold text-dark mb-1">Recently Registered Startups</h5>
+                    <small class="text-muted">Latest ventures added to the SustainRank registry</small>
+                </div>
+                <a th:href="@{/startups}" class="btn btn-outline-secondary btn-sm">View All Startups &rarr;</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small text-uppercase text-muted">
+                        <tr>
+                            <th>Startup</th>
+                            <th>Category</th>
+                            <th>Founder &amp; Location</th>
+                            <th>Status</th>
+                            <th>Overall Score</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="startup : ${recentStartups}">
+                            <td>
+                                <div class="fw-bold text-dark" th:text="${startup.name}">Startup Name</div>
+                                <small class="text-muted" th:text="'Est. ' + ${startup.yearEstablished}">Est. 2022</small>
+                            </td>
+                            <td>
+                                <span th:class="'badge ' +
+                                      (${startup.category.name() == 'TechStartup'} ? 'badge-tech' :
+                                      (${startup.category.name() == 'GreenStartup'} ? 'badge-green' :
+                                      (${startup.category.name() == 'HealthStartup'} ? 'badge-health' : 'badge-social')))"
+                                      th:text="${startup.category.displayName}">Category</span>
+                            </td>
+                            <td>
+                                <div th:text="${startup.founderName}">Founder</div>
+                                <small class="text-muted" th:text="${startup.location}">Location</small>
+                            </td>
+                            <td>
+                                <span th:if="${startup.isAssessed}" class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-check-circle me-1"></i> Assessed
+                                </span>
+                                <span th:unless="${startup.isAssessed}" class="badge bg-secondary-subtle text-secondary border">
+                                    <i class="bi bi-clock me-1"></i> Pending
+                                </span>
+                            </td>
+                            <td>
+                                <div th:if="${startup.isAssessed}">
+                                    <span class="fw-bold text-emerald" th:text="${startup.overallScore} + ' / 100'">85.0 / 100</span>
+                                </div>
+                                <div th:unless="${startup.isAssessed}" class="text-muted small">
+                                    <em>Unassessed</em>
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                <a th:href="@{'/startups/' + ${startup.id}}" class="btn btn-sm btn-light border" title="View Dossier">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{'/assess/' + ${startup.id}}" class="btn btn-sm btn-emerald ms-1" title="Evaluate">
+                                    <i class="bi bi-sliders"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentStartups)}">
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                No startups currently registered. Click "Add Startup" to record your first entry.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Chart.js initialization script -->
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            document.addEventListener('DOMContentLoaded', function () {
+                // Category Distribution Chart
+                var catData = [
+                    /*[(${stats.categoryDistribution.get(T(com.sustainrank.model.StartupCategory).TechStartup)})]*/ 0,
+                    /*[(${stats.categoryDistribution.get(T(com.sustainrank.model.StartupCategory).GreenStartup)})]*/ 0,
+                    /*[(${stats.categoryDistribution.get(T(com.sustainrank.model.StartupCategory).HealthStartup)})]*/ 0,
+                    /*[(${stats.categoryDistribution.get(T(com.sustainrank.model.StartupCategory).SocialStartup)})]*/ 0
+                ];
+
+                var catCtx = document.getElementById('categoryDistributionChart').getContext('2d');
+                new Chart(catCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Tech Startup', 'Green Startup', 'Health Startup', 'Social Startup'],
+                        datasets: [{
+                            data: catData,
+                            backgroundColor: ['#3b82f6', '#10b981', '#06b6d4', '#f59e0b'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        },
+                        cutout: '68%'
+                    }
+                });
+
+                // ESG Pillars Criteria Benchmark Chart
+                var criteriaCtx = document.getElementById('criteriaBenchmarkChart').getContext('2d');
+                new Chart(criteriaCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Environmental (25%)', 'Innovation (25%)', 'Social Impact (25%)', 'Financial Viability (25%)'],
+                        datasets: [{
+                            label: 'Portfolio Average Score (0-100)',
+                            data: [
+                                /*[(${stats.averageEnvironmental})]*/ 0,
+                                /*[(${stats.averageInnovation})]*/ 0,
+                                /*[(${stats.averageSocial})]*/ 0,
+                                /*[(${stats.averageFinancial})]*/ 0
+                            ],
+                            backgroundColor: ['#059669', '#2563eb', '#d97706', '#0284c7'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: { color: '#f1f5f9' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            });
+            /*]]>*/
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

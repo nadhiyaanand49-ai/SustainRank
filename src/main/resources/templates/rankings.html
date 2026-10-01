@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Rankings & Leaderboard')}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/layout :: #wrapper}">
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold mb-1 text-dark">Sustainability Leaderboard &amp; Rankings</h3>
+                <p class="text-muted small mb-0">Dynamic ranking based on composite ESG score across Environmental, Innovation, Social &amp; Financial pillars.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="@{/export/csv}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Export Rankings CSV
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="card border-0 bg-white p-3 mb-4">
+            <form th:action="@{/rankings}" method="get" class="row g-2 align-items-center">
+                <div class="col-12 col-md-5">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" name="query" class="form-control bg-light border-start-0"
+                               placeholder="Search ranked startups..." th:value="${searchQuery}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <select name="category" class="form-select form-select-sm bg-light">
+                        <option value="">All Domains</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat}"
+                                th:text="${cat.displayName}"
+                                th:selected="${selectedCategory == cat}">Category</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-dark btn-sm flex-grow-1">Filter</button>
+                    <a th:href="@{/rankings}" class="btn btn-outline-secondary btn-sm" title="Clear">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Deterministic Tie-Handling Explanation Alert -->
+        <div class="alert alert-light border border-slate-700 bg-white p-3 rounded-3 mb-4 d-flex align-items-start gap-3">
+            <i class="bi bi-diagram-3-fill fs-4 text-emerald"></i>
+            <div class="small text-muted">
+                <strong class="text-dark d-block mb-1">Deterministic Ranking &amp; Tie-Breaking Rule (Java Comparator):</strong>
+                Startups are sorted by <strong>Overall Score (Descending)</strong>. If two startups obtain equal composite scores, ties are sequentially resolved by:
+                <span class="text-dark fw-semibold">1. Environmental Score</span> &rarr;
+                <span class="text-dark fw-semibold">2. Innovation Score</span> &rarr;
+                <span class="text-dark fw-semibold">3. Social Impact Score</span> &rarr;
+                <span class="text-dark fw-semibold">4. Financial Viability Score</span> &rarr;
+                <span class="text-dark fw-semibold">5. Alphabetical Name</span>.
+                Unassessed startups are clearly grouped at the end as <em>Pending</em> and excluded from ordinal ranking.
+            </div>
+        </div>
+
+        <!-- Rankings Table -->
+        <div class="card border-0 bg-white p-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small text-uppercase text-muted">
+                        <tr>
+                            <th style="width: 70px;">Rank</th>
+                            <th>Startup</th>
+                            <th>Domain</th>
+                            <th class="text-center">Environmental (25%)</th>
+                            <th class="text-center">Innovation (25%)</th>
+                            <th class="text-center">Social Impact (25%)</th>
+                            <th class="text-center">Financial Viability (25%)</th>
+                            <th class="text-center">Overall Score</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="startup : ${startups}" th:class="${startup.rank == 1} ? 'table-warning-subtle' : ''">
+                            <!-- Rank Column with Badges for Top 3 -->
+                            <td>
+                                <div th:if="${startup.rank != null}">
+                                    <span th:if="${startup.rank == 1}" class="badge bg-warning text-dark p-2 fs-6 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        <i class="bi bi-trophy-fill"></i>
+                                    </span>
+                                    <span th:if="${startup.rank == 2}" class="badge bg-secondary text-white p-2 fs-6 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        2
+                                    </span>
+                                    <span th:if="${startup.rank == 3}" class="badge bg-warning-subtle text-warning-emphasis border border-warning p-2 fs-6 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        3
+                                    </span>
+                                    <span th:if="${startup.rank > 3}" class="fw-bold text-muted ps-2" th:text="'#' + ${startup.rank}">
+                                        #4
+                                    </span>
+                                </div>
+                                <div th:unless="${startup.rank != null}">
+                                    <span class="badge bg-light text-muted border" title="Awaiting evaluation">Pending</span>
+                                </div>
+                            </td>
+
+                            <!-- Startup Name & Info -->
+                            <td>
+                                <div class="fw-bold text-dark">
+                                    <a th:href="@{'/startups/' + ${startup.id}}" class="text-decoration-none text-dark" th:text="${startup.name}">Name</a>
+                                </div>
+                                <small class="text-muted" th:text="${startup.location}">HQ Location</small>
+                            </td>
+
+                            <!-- Category -->
+                            <td>
+                                <span th:class="'badge ' +
+                                      (${startup.category.name() == 'TechStartup'} ? 'badge-tech' :
+                                      (${startup.category.name() == 'GreenStartup'} ? 'badge-green' :
+                                      (${startup.category.name() == 'HealthStartup'} ? 'badge-health' : 'badge-social')))"
+                                      th:text="${startup.category.displayName}">Category</span>
+                            </td>
+
+                            <!-- Environmental Score -->
+                            <td class="text-center">
+                                <span th:if="${startup.isAssessed}" class="fw-semibold text-success" th:text="${startup.environmentalScore}">85</span>
+                                <span th:unless="${startup.isAssessed}" class="text-muted small">&ndash;</span>
+                            </td>
+
+                            <!-- Innovation Score -->
+                            <td class="text-center">
+                                <span th:if="${startup.isAssessed}" class="fw-semibold text-primary" th:text="${startup.innovationScore}">90</span>
+                                <span th:unless="${startup.isAssessed}" class="text-muted small">&ndash;</span>
+                            </td>
+
+                            <!-- Social Impact Score -->
+                            <td class="text-center">
+                                <span th:if="${startup.isAssessed}" class="fw-semibold text-warning-emphasis" th:text="${startup.socialImpactScore}">80</span>
+                                <span th:unless="${startup.isAssessed}" class="text-muted small">&ndash;</span>
+                            </td>
+
+                            <!-- Financial Viability Score -->
+                            <td class="text-center">
+                                <span th:if="${startup.isAssessed}" class="fw-semibold text-info" th:text="${startup.financialViabilityScore}">75</span>
+                                <span th:unless="${startup.isAssessed}" class="text-muted small">&ndash;</span>
+                            </td>
+
+                            <!-- Composite Overall Score -->
+                            <td class="text-center">
+                                <div th:if="${startup.isAssessed}">
+                                    <span th:class="'score-badge ' +
+                                          (${startup.overallScore >= 85} ? 'score-high' :
+                                          (${startup.overallScore >= 70} ? 'score-medium' :
+                                          (${startup.overallScore >= 50} ? 'score-moderate' : 'score-low')))"
+                                          th:text="${startup.overallScore} + ' / 100'">
+                                        85.0 / 100
+                                    </span>
+                                </div>
+                                <div th:unless="${startup.isAssessed}">
+                                    <span class="badge bg-light text-muted border">Unassessed</span>
+                                </div>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="text-end">
+                                <a th:href="@{'/startups/' + ${startup.id}}" class="btn btn-sm btn-light border" title="View Profile">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{'/assess/' + ${startup.id}}" class="btn btn-sm btn-emerald ms-1" title="Evaluate">
+                                    <i class="bi bi-sliders"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(startups)}">
+                            <td colspan="9" class="text-center py-5 text-muted">
+                                No startups found matching current filters.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

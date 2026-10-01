@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' | SustainRank – Startup Sustainability Platform'">SustainRank</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+    <!-- Chart.js for Data Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+
+<div class="d-flex" id="wrapper">
+    <!-- Dark Navy Sidebar -->
+    <div class="bg-navy text-white sidebar" id="sidebar-wrapper">
+        <div class="sidebar-heading px-4 py-3 border-bottom border-secondary-subtle">
+            <div class="d-flex align-items-center gap-2">
+                <div class="brand-icon bg-emerald text-white rounded-3 p-2 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-shield-check fs-4"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 fw-bold tracking-tight text-white">Sustain<span class="text-emerald">Rank</span></h5>
+                    <small class="text-secondary-emphasis" style="font-size: 0.72rem;">Startup Sustainability Platform</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic PBL Credits Banner -->
+        <div class="p-3 mx-3 my-3 rounded-3 bg-navy-light border border-slate-700">
+            <div class="d-flex align-items-center gap-2 text-emerald mb-1">
+                <i class="bi bi-mortarboard-fill"></i>
+                <small class="fw-bold text-uppercase" style="letter-spacing: 0.05em; font-size: 0.7rem;">Java PBL Project</small>
+            </div>
+            <div class="small text-slate-300 fw-medium">Team: Harshini V &amp; Nadhiya A</div>
+            <div class="small text-slate-400" style="font-size: 0.75rem;">B.Tech IT - Sec C | 2nd Yr, 3rd Sem</div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <div class="list-group list-group-flush px-3 py-2">
+            <a th:href="@{/dashboard}"
+               th:class="'nav-item-link ' + (${activePage == 'dashboard'} ? 'active' : '')">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+            <a th:href="@{/startups}"
+               th:class="'nav-item-link ' + (${activePage == 'startups'} ? 'active' : '')">
+                <i class="bi bi-building me-2"></i> Startups Directory
+            </a>
+            <a th:href="@{/rankings}"
+               th:class="'nav-item-link ' + (${activePage == 'rankings'} ? 'active' : '')">
+                <i class="bi bi-trophy me-2"></i> Rankings &amp; ESG Scores
+            </a>
+            <a th:href="@{/analytics}"
+               th:class="'nav-item-link ' + (${activePage == 'analytics'} ? 'active' : '')">
+                <i class="bi bi-bar-chart-line me-2"></i> Analytics &amp; Reports
+            </a>
+            <a th:href="@{/startups/new}" class="nav-item-link text-emerald-light">
+                <i class="bi bi-plus-circle me-2"></i> Register New Startup
+            </a>
+            <a th:href="@{/h2-console}" target="_blank" class="nav-item-link text-slate-400">
+                <i class="bi bi-database me-2"></i> H2 Database Console
+            </a>
+        </div>
+
+        <!-- Sidebar Footer with Authenticated User & Logout -->
+        <div class="mt-auto p-3 border-top border-slate-700">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-sm bg-emerald text-white rounded-circle d-flex align-items-center justify-content-center fw-bold">
+                        A
+                    </div>
+                    <div>
+                        <div class="small fw-semibold text-white">Administrator</div>
+                        <div class="text-slate-400" style="font-size: 0.7rem;">Logged in as admin</div>
+                    </div>
+                </div>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-danger btn-sm p-1 px-2" title="Sign Out">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="page-content-wrapper" class="w-100 min-vh-100 d-flex flex-column">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-2 sticky-top">
+            <div class="container-fluid p-0">
+                <button class="btn btn-link text-dark d-md-none" id="sidebarToggle">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
+                <div class="d-none d-md-flex align-items-center gap-2">
+                    <span class="badge bg-emerald-subtle text-emerald-emphasis border border-emerald-subtle">
+                        <i class="bi bi-check2-circle me-1"></i> Spring Boot 3.2 &amp; Java 17
+                    </span>
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis">
+                        <i class="bi bi-hdd-fill me-1"></i> H2 File-Persistent Storage
+                    </span>
+                </div>
+                <div class="d-flex align-items-center gap-3 ms-auto">
+                    <a th:href="@{/export/csv}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                        <i class="bi bi-download"></i> Export CSV
+                    </a>
+                    <a th:href="@{/startups/new}" class="btn btn-emerald btn-sm d-flex align-items-center gap-1">
+                        <i class="bi bi-plus-lg"></i> Add Startup
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Flash Alert Messages -->
+        <div class="container-fluid px-4 pt-3">
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show d-flex align-items-center shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill fs-5 me-2 text-success"></i>
+                <div th:text="${successMessage}">Operation completed successfully.</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5 me-2 text-danger"></i>
+                <div th:text="${errorMessage}">An error occurred.</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Page Dynamic Body Content -->
+        <div class="container-fluid px-4 py-3 flex-grow-1">
+            <div th:replace="${content}"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white border-top py-3 px-4 mt-auto">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center small text-muted">
+                <div>
+                    <strong>SustainRank</strong> &copy; 2026. Java Project-Based Learning (PBL).
+                </div>
+                <div>
+                    Developed by <strong>Harshini V</strong> and <strong>Nadhiya A</strong> (B.Tech IT, Sec C, 2nd Year, 3rd Sem)
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!-- Bootstrap 5 Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Responsive sidebar toggle
+    const toggleBtn = document.getElementById('sidebarToggle');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            document.getElementById('wrapper').classList.toggle('toggled');
+        });
+    }
+</script>
+</body>
+</html>
